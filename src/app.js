@@ -6,6 +6,8 @@ import { MaterialSystem } from './materials.js';
 import { ObjectSystem } from './objects.js';
 import { PaintSystem } from './paint.js';
 import { UI } from './ui.js';
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+
 
 export class App {
   constructor({ viewportEl, statusEl }) {
@@ -36,14 +38,21 @@ export class App {
   async init() {
     this.setStatus('Booting…');
 
-    const { renderer, pmrem, composer, overlay } = await createRenderer(this.viewportEl);
-    const rig = createSceneRig();
+    const { renderer, pmrem, overlay } = await createRenderer(this.viewportEl);
+const rig = createSceneRig();
 
-    this.renderer = renderer;
-    this.scene = rig.scene;
-    this.camera = rig.camera;
-    this.controls = rig.controls;
-    this.scene.add(rig.lights.group);
+this.renderer = renderer;
+this.scene = rig.scene;
+this.camera = rig.camera;
+
+// ✅ CREATE OrbitControls HERE (this is the line you asked about)
+this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+this.controls.enableDamping = true;
+this.controls.dampingFactor = 0.08;
+this.controls.target.set(0, 6, 0);
+
+// add lights
+this.scene.add(rig.lights);
 
     // Systems
     this.materials = new MaterialSystem();
