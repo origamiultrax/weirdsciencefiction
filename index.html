@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Weird Science Fiction</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- Top toolbar (Bryce-inspired) -->
+    <header id="topbar">
+      <div class="brand">
+        <span class="hamb">≡</span>
+        <span class="title">Weird Science Fiction</span>
+      </div>
+
+      <nav class="menus">
+        <button class="menuBtn" data-menu="create">Create ▾</button>
+        <button class="menuBtn" data-menu="edit">Edit ▾</button>
+        <button class="menuBtn" data-menu="sky">Sky & Fog ▾</button>
+        <button class="menuBtn" data-menu="camera">Camera ▾</button>
+        <button class="menuBtn" id="finalRenderBtn">Final Render</button>
+      </nav>
+
+      <div class="topRight">
+        <div class="badge">WSF</div>
+      </div>
+    </header>
+
+    <!-- Main area -->
+    <main id="main">
+      <!-- Left “object palette” rail -->
+      <aside id="leftRail">
+        <div class="railSection">
+          <div class="thumb" id="sceneThumb">
+            <div class="thumbInner">Scene</div>
+          </div>
+        </div>
+
+        <div class="railSection">
+          <div class="railTitle">Objects</div>
+          <button class="railIcon" id="addSphereBtn" title="Sphere">●</button>
+          <button class="railIcon" id="addCubeBtn" title="Cube">■</button>
+          <button class="railIcon" id="addConeBtn" title="Cone">▲</button>
+          <button class="railIcon" id="addCylBtn" title="Cylinder">▮</button>
+          <button class="railIcon" id="scatterTreesBtn" title="Scatter Trees">🌲</button>
+          <button class="railIcon" id="scatterRocksBtn" title="Scatter Rocks">🪨</button>
+        </div>
+
+        <div class="railSection">
+          <div class="railTitle">Paint</div>
+          <button class="railIcon small" data-paint="height" title="Paint Height">⛰</button>
+          <button class="railIcon small" data-paint="erosion" title="Paint Erosion">≈</button>
+          <button class="railIcon small" data-paint="snow" title="Paint Snow">❄</button>
+          <button class="railIcon small" data-paint="veg" title="Paint Vegetation">✿</button>
+          <button class="railIcon small" data-paint="mood" title="Paint Mood Zone">☁</button>
+        </div>
+      </aside>
+
+      <!-- Center viewport -->
+      <section id="viewportWrap">
+        <div id="viewport"></div>
+
+        <!-- Right-side mini tools strip (visual only / some hooks) -->
+        <div id="rightStrip">
+          <button class="stripBtn" id="orbitBtn" title="Orbit">⟳</button>
+          <button class="stripBtn" id="panBtn" title="Pan">↔</button>
+          <button class="stripBtn" id="dollyBtn" title="Dolly">⇵</button>
+          <div class="stripSep"></div>
+          <button class="stripBtn" id="gridBtn" title="Grid">▦</button>
+          <button class="stripBtn" id="axesBtn" title="Axes">✛</button>
+        </div>
+      </section>
+
+      <!-- Right inspector panels -->
+      <aside id="rightPanels">
+        <div class="panel">
+          <div class="panelHeader">Terrain</div>
+          <div class="panelBody">
+            <div class="row">
+              <label>Frequency</label>
+              <input id="noiseFreq" type="range" min="0.2" max="6" step="0.01" value="2.0" />
+              <span class="val" id="noiseFreqVal"></span>
+            </div>
+            <div class="row">
+              <label>Amplitude</label>
+              <input id="noiseAmp" type="range" min="1" max="30" step="0.1" value="14" />
+              <span class="val" id="noiseAmpVal"></span>
+            </div>
+            <div class="row">
+              <label>Octaves</label>
+              <input id="noiseOct" type="range" min="1" max="8" step="1" value="5" />
+              <span class="val" id="noiseOctVal"></span>
+            </div>
+            <div class="row">
+              <label>Plateau</label>
+              <input id="plateau" type="range" min="0" max="1" step="0.01" value="0.12" />
+              <span class="val" id="plateauVal"></span>
+            </div>
+            <div class="row">
+              <label>Smoothing</label>
+              <input id="smooth" type="range" min="0" max="1" step="0.01" value="0.15" />
+              <span class="val" id="smoothVal"></span>
+            </div>
+            <div class="row">
+              <label>Erosion (fake)</label>
+              <input id="erosion" type="range" min="0" max="1" step="0.01" value="0.25" />
+              <span class="val" id="erosionVal"></span>
+            </div>
+            <div class="row">
+              <button id="regenTerrainBtn" class="primary">Regenerate</button>
+              <button id="resetTerrainBtn">Reset</button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="row">
+              <label>Paint Brush</label>
+              <input id="brushSize" type="range" min="0.5" max="12" step="0.1" value="3.2" />
+              <span class="val" id="brushSizeVal"></span>
+            </div>
+            <div class="row">
+              <label>Strength</label>
+              <input id="brushStrength" type="range" min="0" max="1" step="0.01" value="0.35" />
+              <span class="val" id="brushStrengthVal"></span>
+            </div>
+            <div class="row">
+              <label>Mode</label>
+              <select id="paintMode">
+                <option value="height">Height</option>
+                <option value="erosion">Erosion</option>
+                <option value="snow">Snow</option>
+                <option value="veg">Vegetation</option>
+                <option value="mood">Mood (Fog)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHeader">Sky & Atmosphere</div>
+          <div class="panelBody">
+            <div class="row">
+              <label>Time of Day</label>
+              <input id="timeOfDay" type="range" min="0" max="1" step="0.001" value="0.62" />
+              <span class="val" id="timeOfDayVal"></span>
+            </div>
+            <div class="row">
+              <label>Fog Density</label>
+              <input id="fogDensity" type="range" min="0" max="0.08" step="0.0005" value="0.018" />
+              <span class="val" id="fogDensityVal"></span>
+            </div>
+            <div class="row">
+              <label>Clouds</label>
+              <input id="cloudAmount" type="range" min="0" max="1" step="0.01" value="0.55" />
+              <span class="val" id="cloudAmountVal"></span>
+            </div>
+            <div class="row">
+              <label>Sky Zenith</label>
+              <input id="skyZenith" type="color" value="#2b4a8f" />
+            </div>
+            <div class="row">
+              <label>Sky Horizon</label>
+              <input id="skyHorizon" type="color" value="#d7b58a" />
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHeader">Materials</div>
+          <div class="panelBody">
+            <div class="row">
+              <label>Preset</label>
+              <select id="matPreset">
+                <option value="grass">Grass</option>
+                <option value="rock">Rock</option>
+                <option value="snow">Snow</option>
+                <option value="water">Water</option>
+                <option value="metal">Metal</option>
+              </select>
+            </div>
+            <div class="row">
+              <label>Variation</label>
+              <input id="matVar" type="range" min="0" max="1" step="0.01" value="0.25" />
+              <span class="val" id="matVarVal"></span>
+            </div>
+            <div class="row">
+              <label>Roughness</label>
+              <input id="matRough" type="range" min="0" max="1" step="0.01" value="0.85" />
+              <span class="val" id="matRoughVal"></span>
+            </div>
+            <div class="row">
+              <label>Scale</label>
+              <input id="matScale" type="range" min="0.2" max="8" step="0.01" value="2.2" />
+              <span class="val" id="matScaleVal"></span>
+            </div>
+            <div class="row">
+              <label>Blend (Slope)</label>
+              <input id="blendSlope" type="range" min="0" max="1" step="0.01" value="0.55" />
+              <span class="val" id="blendSlopeVal"></span>
+            </div>
+            <div class="row">
+              <label>Blend (Height)</label>
+              <input id="blendHeight" type="range" min="0" max="1" step="0.01" value="0.48" />
+              <span class="val" id="blendHeightVal"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panelHeader">Camera & Render</div>
+          <div class="panelBody">
+            <div class="row">
+              <label>Preset</label>
+              <select id="camPreset">
+                <option value="wide">Wide</option>
+                <option value="tele">Telephoto</option>
+                <option value="aerial">Aerial</option>
+              </select>
+            </div>
+            <div class="row">
+              <label>Depth of Field</label>
+              <input id="dofToggle" type="checkbox" />
+            </div>
+            <div class="row">
+              <label>Exposure</label>
+              <input id="exposure" type="range" min="0.2" max="2.5" step="0.01" value="1.05" />
+              <span class="val" id="exposureVal"></span>
+            </div>
+            <div class="row">
+              <button id="snapshotBtn">Snapshot PNG</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Bottom playback-ish strip (visual homage) -->
+    <footer id="bottombar">
+      <div class="bottomLeft">
+        <div class="tinyLabel">Plane</div>
+        <div class="tinyValue" id="statusText">Ready</div>
+      </div>
+
+      <div class="transport">
+        <button class="tbtn">⏮</button>
+        <button class="tbtn">⏪</button>
+        <button class="tbtn">⏯</button>
+        <button class="tbtn">⏩</button>
+        <button class="tbtn">⏭</button>
+      </div>
+
+      <div class="bottomRight">
+        <div class="sliderWrap">
+          <span class="tinyLabel">Time</span>
+          <input id="timeline" type="range" min="0" max="1" step="0.001" value="0.62" />
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

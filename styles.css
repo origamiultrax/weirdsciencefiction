@@ -1,0 +1,295 @@
+:root{
+  --bg:#cfcfcf;
+  --panel:#e7e7e7;
+  --panel2:#dddddd;
+  --ink:#1b1b1b;
+  --shadow: rgba(0,0,0,.25);
+  --rim: rgba(255,255,255,.65);
+  --accent:#2b6ad9;
+  --blueLine:#2f6cf1;
+  --redLine:#d34141;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: linear-gradient(#bdbdbd,#d8d8d8);
+  color:var(--ink);
+  user-select:none;
+}
+
+#app{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+}
+
+#topbar{
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 10px;
+  background: linear-gradient(#bfbfbf,#9f9f9f);
+  border-bottom: 1px solid #8a8a8a;
+  box-shadow: 0 2px 0 var(--rim) inset;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.hamb{
+  font-weight:700;
+  font-size:18px;
+  padding:2px 8px;
+  border-radius:6px;
+  background:linear-gradient(#f1f1f1,#bcbcbc);
+  box-shadow: 0 1px 0 var(--rim) inset, 0 1px 2px var(--shadow);
+}
+.title{
+  font-weight:700;
+  letter-spacing:.2px;
+  text-shadow: 0 1px 0 var(--rim);
+}
+
+.menus{display:flex; gap:8px; align-items:center;}
+.menuBtn{
+  height:28px;
+  padding:0 10px;
+  border:1px solid #8a8a8a;
+  border-radius:6px;
+  background:linear-gradient(#f1f1f1,#c6c6c6);
+  box-shadow: 0 1px 0 var(--rim) inset, 0 1px 2px var(--shadow);
+  cursor:pointer;
+}
+.menuBtn:active{transform: translateY(1px)}
+#finalRenderBtn{
+  background:linear-gradient(#eaf2ff,#b7cdfa);
+  border-color:#6b89d8;
+}
+
+.topRight{
+  display:flex; align-items:center; gap:8px;
+}
+.badge{
+  font-weight:800;
+  font-size:12px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:linear-gradient(#fefefe,#cfcfcf);
+  border:1px solid #9a9a9a;
+  box-shadow: 0 1px 0 var(--rim) inset, 0 1px 2px var(--shadow);
+}
+
+/* Main layout */
+#main{
+  flex:1;
+  display:grid;
+  grid-template-columns: 90px 1fr 320px;
+  gap:10px;
+  padding:10px;
+  min-height:0;
+}
+
+/* Left rail */
+#leftRail{
+  background:linear-gradient(#ededed,#d1d1d1);
+  border:1px solid #9b9b9b;
+  border-radius:10px;
+  box-shadow: 0 1px 0 var(--rim) inset, 0 2px 4px var(--shadow);
+  padding:8px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.railSection{
+  background:linear-gradient(#f4f4f4,#dcdcdc);
+  border:1px solid #a6a6a6;
+  border-radius:10px;
+  padding:8px;
+  box-shadow: 0 1px 0 var(--rim) inset;
+}
+.railTitle{
+  font-size:11px;
+  opacity:.75;
+  margin-bottom:6px;
+  font-weight:700;
+  letter-spacing:.3px;
+}
+.thumb{
+  width:100%;
+  aspect-ratio: 1 / 1;
+  border-radius:10px;
+  border:1px solid #a6a6a6;
+  background:
+    radial-gradient(circle at 30% 30%, #ffffff, #d7d7d7 55%, #bdbdbd);
+  position:relative;
+  box-shadow: 0 1px 0 var(--rim) inset;
+}
+.thumbInner{
+  position:absolute; inset:8px;
+  border-radius:8px;
+  background: linear-gradient(#b7d2ff,#e6e6e6);
+  border:1px solid #97a9c8;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700;
+  color:#183a73;
+}
+
+.railIcon{
+  width:100%;
+  height:38px;
+  margin:4px 0;
+  border-radius:12px;
+  border:1px solid #9c9c9c;
+  background:radial-gradient(circle at 30% 30%, #ffffff, #d3d3d3 60%, #b7b7b7);
+  box-shadow: 0 1px 0 var(--rim) inset, 0 1px 2px var(--shadow);
+  cursor:pointer;
+  font-size:18px;
+}
+.railIcon.small{height:32px; font-size:16px}
+.railIcon:active{transform: translateY(1px)}
+
+/* Viewport */
+#viewportWrap{
+  position:relative;
+  background: linear-gradient(#ececec,#d0d0d0);
+  border:1px solid #9b9b9b;
+  border-radius:12px;
+  box-shadow: 0 1px 0 var(--rim) inset, 0 2px 6px var(--shadow);
+  overflow:hidden;
+  min-height:0;
+}
+
+#viewport{
+  position:absolute; inset:0;
+}
+
+/* right strip */
+#rightStrip{
+  position:absolute;
+  top:12px;
+  right:10px;
+  width:36px;
+  background:linear-gradient(#f4f4f4,#d8d8d8);
+  border:1px solid #9b9b9b;
+  border-radius:10px;
+  box-shadow: 0 1px 0 var(--rim) inset, 0 2px 4px var(--shadow);
+  padding:6px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  opacity:.92;
+}
+.stripBtn{
+  height:28px;
+  border-radius:8px;
+  border:1px solid #9c9c9c;
+  background:linear-gradient(#ffffff,#cfcfcf);
+  box-shadow: 0 1px 0 var(--rim) inset;
+  cursor:pointer;
+}
+.stripSep{height:1px; background:#b3b3b3; margin:4px 2px}
+
+/* Right panels */
+#rightPanels{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-height:0;
+  overflow:auto;
+  padding-right:2px;
+}
+.panel{
+  background:linear-gradient(#f2f2f2,#dbdbdb);
+  border:1px solid #9b9b9b;
+  border-radius:12px;
+  box-shadow: 0 1px 0 var(--rim) inset, 0 2px 4px var(--shadow);
+  overflow:hidden;
+}
+.panelHeader{
+  font-weight:800;
+  font-size:12px;
+  padding:8px 10px;
+  background:linear-gradient(#cfcfcf,#b6b6b6);
+  border-bottom:1px solid #9b9b9b;
+  text-shadow: 0 1px 0 var(--rim);
+}
+.panelBody{
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.row{
+  display:grid;
+  grid-template-columns: 110px 1fr 54px;
+  gap:8px;
+  align-items:center;
+}
+.row label{
+  font-size:12px;
+  font-weight:700;
+  opacity:.9;
+}
+.row input[type="range"]{width:100%}
+.row select, .row input[type="color"]{
+  grid-column: 2 / 4;
+  height:28px;
+  border-radius:8px;
+  border:1px solid #9b9b9b;
+  background:#f7f7f7;
+}
+.val{
+  font-size:12px;
+  text-align:right;
+  opacity:.8;
+}
+button.primary{
+  background:linear-gradient(#eaf2ff,#b7cdfa);
+  border-color:#6b89d8;
+}
+.row button{
+  height:30px;
+  border-radius:10px;
+  border:1px solid #9b9b9b;
+  background:linear-gradient(#ffffff,#cfcfcf);
+  box-shadow: 0 1px 0 var(--rim) inset, 0 1px 2px var(--shadow);
+  cursor:pointer;
+}
+.row button:active{transform: translateY(1px)}
+.divider{height:1px;background:#bcbcbc;margin:2px 0}
+
+/* Bottom bar */
+#bottombar{
+  height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 10px;
+  background: linear-gradient(#bfbfbf,#9f9f9f);
+  border-top: 1px solid #8a8a8a;
+  box-shadow: 0 2px 0 var(--rim) inset;
+}
+.bottomLeft{
+  display:flex; flex-direction:column; gap:2px;
+}
+.tinyLabel{font-size:11px; opacity:.75; font-weight:700}
+.tinyValue{font-size:12px; font-weight:800}
+.transport{display:flex; gap:6px; align-items:center}
+.tbtn{
+  width:38px;
+  height:28px;
+  border-radius:8px;
+  border:1px solid #8a8a8a;
+  background:linear-gradient(#f1f1f1,#c6c6c6);
+  box-shadow: 0 1px 0 var(--rim) inset, 0 1px 2px var(--shadow);
+}
+.sliderWrap{display:flex; align-items:center; gap:8px}
+#timeline{width:240px}
+
+/* Simple “Bryce-ish” overlay grid lines drawn by WebGL (see renderer.js) */
