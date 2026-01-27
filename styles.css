@@ -1,23 +1,36 @@
 :root{
-  --bg:#cfcfcf;
-  --panel:#e7e7e7;
-  --panel2:#dddddd;
-  --ink:#1b1b1b;
-  --shadow: rgba(0,0,0,.25);
-  --rim: rgba(255,255,255,.65);
-  --accent:#2b6ad9;
-  --blueLine:#2f6cf1;
-  --redLine:#d34141;
+  --bg0:#05050a;
+  --bg1:#0a0a12;
+  --ink:#eaf2ff;
+
+  --panelA: rgba(20, 24, 40, .72);
+  --panelB: rgba(10, 12, 22, .72);
+  --rim: rgba(255,255,255,.26);
+  --shadow: rgba(0,0,0,.6);
+
+  --neonCyan:#5cf3ff;
+  --neonBlue:#4c6fff;
+  --neonMag:#ff3fd6;
+  --neonLime:#b4ff2f;
+  --neonRed:#ff2a2a;
+
+  --chromeHi: rgba(255,255,255,.75);
+  --chromeMid: rgba(170,190,255,.35);
+  --chromeLo: rgba(0,0,0,.35);
+  --glass: rgba(255,255,255,.08);
 }
 
-*{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: linear-gradient(#bdbdbd,#d8d8d8);
-  color:var(--ink);
-  user-select:none;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 800px at 20% 15%, rgba(92,243,255,.20), transparent 60%),
+    radial-gradient(1100px 700px at 85% 25%, rgba(255,63,214,.16), transparent 55%),
+    radial-gradient(900px 700px at 50% 90%, rgba(180,255,47,.10), transparent 60%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
+  overflow:hidden;
 }
 
 #app{
@@ -293,3 +306,221 @@ button.primary{
 #timeline{width:240px}
 
 /* Simple “Bryce-ish” overlay grid lines drawn by WebGL (see renderer.js) */
+/* Ensure the WebGL canvas never blocks UI clicks */
+#viewport canvas { pointer-events: auto; }
+#viewportWrap { pointer-events: auto; }
+
+/* Ensure side panels are always clickable */
+#leftRail, #rightPanels, #topbar, #bottombar {
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+/* Keep the viewport behind UI panels */
+#viewportWrap {
+  z-index: 1;
+}
+/* ---------- Y2K CHROME / NEON THEME PACK ---------- */
+
+/* subtle scanlines + film grain overlay */
+#app::before{
+  content:"";
+  position:fixed; inset:0;
+  pointer-events:none;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,.03) 0px,
+      rgba(255,255,255,.03) 1px,
+      rgba(0,0,0,0) 3px,
+      rgba(0,0,0,0) 6px
+    ),
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.06), transparent 60%),
+    radial-gradient(circle at 80% 30%, rgba(255,255,255,.04), transparent 60%);
+  mix-blend-mode: overlay;
+  opacity:.55;
+  z-index:9999;
+}
+
+/* top bar = glossy chrome */
+#topbar{
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,.22),
+      rgba(255,255,255,.06) 35%,
+      rgba(0,0,0,.25) 100%),
+    linear-gradient(90deg,
+      rgba(92,243,255,.12),
+      rgba(255,63,214,.10) 55%,
+      rgba(180,255,47,.08));
+  border-bottom: 1px solid rgba(255,255,255,.18);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.28) inset,
+    0 10px 30px rgba(0,0,0,.35);
+  backdrop-filter: blur(8px);
+}
+
+/* brand title = neon outline */
+.title{
+  font-weight: 900;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 8px rgba(92,243,255,.45),
+    0 0 16px rgba(76,111,255,.35),
+    0 1px 0 rgba(0,0,0,.7);
+}
+
+/* chrome buttons */
+.menuBtn, .row button, .tbtn, .stripBtn, .railIcon{
+  color: var(--ink);
+  border: 1px solid rgba(255,255,255,.22);
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,.28),
+      rgba(255,255,255,.10) 35%,
+      rgba(0,0,0,.35) 100%),
+    linear-gradient(90deg,
+      rgba(92,243,255,.10),
+      rgba(255,63,214,.08),
+      rgba(180,255,47,.06));
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.20) inset,
+    0 10px 22px rgba(0,0,0,.35),
+    0 0 0 1px rgba(0,0,0,.25);
+}
+.menuBtn:hover, .row button:hover, .tbtn:hover, .stripBtn:hover, .railIcon:hover{
+  filter: brightness(1.08);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.25) inset,
+    0 10px 22px rgba(0,0,0,.35),
+    0 0 18px rgba(92,243,255,.20);
+}
+.menuBtn:active, .row button:active, .tbtn:active, .stripBtn:active, .railIcon:active{
+  transform: translateY(1px);
+  filter: brightness(.98);
+}
+
+/* make Final Render button pop */
+#finalRenderBtn{
+  border-color: rgba(92,243,255,.55);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.25) inset,
+    0 10px 22px rgba(0,0,0,.35),
+    0 0 18px rgba(92,243,255,.35);
+}
+
+/* panels = dark glass */
+#leftRail, #rightPanels .panel, #viewportWrap, #bottombar{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.35)),
+    linear-gradient(180deg, var(--panelA), var(--panelB));
+  border: 1px solid rgba(255,255,255,.18);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.16) inset,
+    0 18px 40px rgba(0,0,0,.45);
+  backdrop-filter: blur(10px);
+}
+
+/* panel headers = holographic bar */
+.panelHeader{
+  background:
+    linear-gradient(90deg,
+      rgba(92,243,255,.18),
+      rgba(255,63,214,.16) 55%,
+      rgba(180,255,47,.12) 100%),
+    linear-gradient(180deg, rgba(255,255,255,.16), rgba(0,0,0,.35));
+  border-bottom: 1px solid rgba(255,255,255,.18);
+  text-shadow:
+    0 0 10px rgba(92,243,255,.20),
+    0 1px 0 rgba(0,0,0,.8);
+  letter-spacing:.6px;
+}
+
+/* viewport = “screen” with glow + vignette */
+#viewportWrap{
+  position:relative;
+  overflow:hidden;
+}
+#viewportWrap::after{
+  content:"";
+  position:absolute; inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 50% 40%, rgba(92,243,255,.10), transparent 60%),
+    radial-gradient(900px 500px at 60% 55%, rgba(255,63,214,.08), transparent 65%),
+    radial-gradient(circle at 50% 50%, transparent 55%, rgba(0,0,0,.35) 100%);
+  mix-blend-mode: screen;
+  opacity:.85;
+}
+
+/* left rail icons = glass pills */
+.railIcon{
+  border-radius: 14px;
+  font-weight: 800;
+  text-shadow: 0 0 10px rgba(92,243,255,.25);
+}
+
+/* sliders: neon track + thumb */
+input[type="range"]{
+  -webkit-appearance:none;
+  appearance:none;
+  height: 6px;
+  border-radius:999px;
+  background: linear-gradient(90deg, rgba(92,243,255,.6), rgba(255,63,214,.45), rgba(180,255,47,.35));
+  box-shadow: 0 0 12px rgba(92,243,255,.14);
+  outline:none;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border:1px solid rgba(255,255,255,.4);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.85), rgba(255,255,255,.20) 45%, rgba(0,0,0,.35) 100%);
+  box-shadow:
+    0 0 14px rgba(92,243,255,.35),
+    0 0 22px rgba(255,63,214,.18);
+}
+input[type="range"]::-moz-range-thumb{
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border:1px solid rgba(255,255,255,.4);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.85), rgba(255,255,255,.20) 45%, rgba(0,0,0,.35) 100%);
+  box-shadow:
+    0 0 14px rgba(92,243,255,.35),
+    0 0 22px rgba(255,63,214,.18);
+}
+
+/* badge = chrome chip */
+.badge{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.28), rgba(0,0,0,.35)),
+    linear-gradient(90deg, rgba(92,243,255,.12), rgba(255,63,214,.10));
+  border: 1px solid rgba(255,255,255,.20);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.16) inset,
+    0 0 18px rgba(92,243,255,.18);
+}
+
+/* bottom bar transport = tiny chrome */
+#bottombar{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.16), rgba(0,0,0,.35)),
+    linear-gradient(90deg, rgba(92,243,255,.10), rgba(255,63,214,.08), rgba(180,255,47,.06));
+}
+
+/* small neon separators */
+.divider, .stripSep{
+  background: linear-gradient(90deg, transparent, rgba(92,243,255,.35), transparent);
+}
+
+/* optional: make text more “PS2 box” */
+.panelBody label{
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  opacity:.92;
+}
