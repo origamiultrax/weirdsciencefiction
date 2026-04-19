@@ -1,0 +1,280 @@
+/* =========================================================
+   WEIRD SCIENCE FICTION — main.css
+   Core layout, typography, background atmosphere
+   ========================================================= */
+
+:root {
+  /* Metal chrome palette */
+  --metal-hi:   #c8c4bc;
+  --metal-mid:  #8a867e;
+  --metal-lo:   #45423c;
+  --metal-deep: #1e1c18;
+  --metal-shadow: #0a0908;
+
+  /* Industrial accents */
+  --acid-green: #7dff42;
+  --acid-orange: #ff6a1a;
+  --acid-red: #ff2a3a;
+  --lcd-blue: #4ae3ff;
+  --lcd-amber: #ffb020;
+
+  /* Screen phosphor */
+  --screen-bg: #0a1a22;
+  --screen-glow: #1e3a48;
+  --screen-text: #8ae6ff;
+
+  /* Panel flesh */
+  --panel-grime: #2a2520;
+  --panel-edge: #0d0b09;
+  --rivet: #1a1814;
+
+  /* Typography */
+  --font-display: 'Orbitron', sans-serif;
+  --font-lcd: 'VT323', monospace;
+  --font-type: 'Special Elite', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  color: var(--metal-hi);
+  font-family: var(--font-lcd);
+  font-size: 15px;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  /* Deep organic backdrop like Image 2's bio-mechanical dark */
+  background:
+    radial-gradient(ellipse at 20% 10%, #2a1510 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 90%, #1a0a1a 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, #0a0a12 0%, #000 70%);
+  display: flex;
+  flex-direction: column;
+}
+
+/* -------- Atmospheric overlays -------- */
+.grain {
+  pointer-events: none;
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.4 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+  opacity: 0.35;
+  mix-blend-mode: overlay;
+  z-index: 9998;
+}
+.scanlines {
+  pointer-events: none;
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0,
+    rgba(0,0,0,0) 2px,
+    rgba(0,0,0,0.12) 3px,
+    rgba(0,0,0,0) 4px
+  );
+  z-index: 9997;
+  mix-blend-mode: multiply;
+}
+
+/* -------- Title bar -------- */
+.titlebar {
+  height: 42px;
+  background:
+    linear-gradient(180deg, #3a3530 0%, #1a1714 60%, #0a0807 100%);
+  border-bottom: 2px solid #000;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.15),
+    inset 0 -1px 0 rgba(0,0,0,0.8),
+    0 2px 8px rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 14px;
+  position: relative;
+  z-index: 10;
+}
+.titlebar::before, .titlebar::after {
+  content: ''; position: absolute; top: 50%; width: 8px; height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #2a2824, #000);
+  box-shadow: inset 0 0 2px #000, 0 1px 1px rgba(255,255,255,0.1);
+  transform: translateY(-50%);
+}
+.titlebar::before { left: 4px; }
+.titlebar::after  { right: 4px; }
+
+.titlebar-left { display: flex; align-items: center; gap: 12px; }
+
+.logo-lump {
+  width: 26px; height: 26px;
+  background:
+    radial-gradient(circle at 30% 25%, #ff9060 0%, #c02010 40%, #3a0808 80%),
+    #200;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 2px 3px rgba(255,200,180,0.5),
+    inset 0 -2px 3px rgba(0,0,0,0.8),
+    0 0 8px rgba(255,80,20,0.4),
+    0 0 0 2px #0a0807;
+  animation: lumpPulse 3s ease-in-out infinite;
+}
+@keyframes lumpPulse {
+  0%, 100% { box-shadow: inset 0 2px 3px rgba(255,200,180,0.5), inset 0 -2px 3px rgba(0,0,0,0.8), 0 0 8px rgba(255,80,20,0.4), 0 0 0 2px #0a0807; }
+  50% { box-shadow: inset 0 2px 3px rgba(255,200,180,0.5), inset 0 -2px 3px rgba(0,0,0,0.8), 0 0 18px rgba(255,120,40,0.7), 0 0 0 2px #0a0807; }
+}
+
+.title-text {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: #d8d0c0;
+  text-shadow:
+    0 1px 0 #000,
+    0 0 8px rgba(125,255,66,0.15);
+}
+.title-sub {
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--acid-green);
+  letter-spacing: 1.5px;
+  margin-left: 10px;
+  opacity: 0.8;
+}
+
+.titlebar-right { display: flex; align-items: center; gap: 8px; }
+.status-lamp {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #c0ff90, var(--acid-green) 50%, #2a5010 90%);
+  box-shadow:
+    inset 0 -1px 2px rgba(0,0,0,0.6),
+    0 0 10px var(--acid-green),
+    0 0 0 2px #000;
+  animation: lampBlink 2s ease-in-out infinite;
+}
+@keyframes lampBlink {
+  0%, 90%, 100% { opacity: 1; }
+  95% { opacity: 0.3; }
+}
+.status-text {
+  font-family: var(--font-lcd);
+  font-size: 14px;
+  color: var(--acid-green);
+  letter-spacing: 2px;
+  text-shadow: 0 0 6px var(--acid-green);
+}
+
+/* -------- Main workspace -------- */
+.workspace {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 110px 1fr 280px;
+  gap: 6px;
+  padding: 6px;
+  min-height: 0;
+}
+
+/* -------- Mood bar (bottom) -------- */
+.moodbar {
+  height: 28px;
+  background:
+    linear-gradient(180deg, #0a0807 0%, #1a1714 50%, #0a0807 100%);
+  border-top: 2px solid #000;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  gap: 18px;
+  font-family: var(--font-lcd);
+  font-size: 13px;
+}
+.mood-section {
+  display: flex; align-items: center; gap: 6px;
+  color: var(--metal-hi);
+}
+.mood-section.grow { flex: 1; overflow: hidden; }
+.mood-label {
+  color: var(--lcd-amber);
+  letter-spacing: 1.5px;
+  font-size: 11px;
+  text-shadow: 0 0 4px rgba(255,176,32,0.5);
+}
+.mood-val {
+  color: var(--acid-green);
+  text-shadow: 0 0 4px rgba(125,255,66,0.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.memory-bar {
+  width: 100px; height: 10px;
+  background: #000;
+  border: 1px solid var(--metal-lo);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+  position: relative;
+}
+.memory-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #20ff40, #ffb020 70%, #ff2a3a 100%);
+  width: 18%;
+  box-shadow: 0 0 6px var(--acid-green);
+  transition: width 0.4s;
+}
+.mood-blink {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--acid-red);
+  box-shadow: 0 0 6px var(--acid-red);
+  animation: recBlink 1.2s steps(2) infinite;
+}
+@keyframes recBlink { 50% { opacity: 0.15; } }
+
+/* -------- Utility -------- */
+.hidden { display: none !important; }
+
+/* -------- Render overlay -------- */
+.render-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 10000;
+  backdrop-filter: blur(2px);
+}
+.render-window {
+  background: linear-gradient(180deg, #2a2520, #0a0807);
+  border: 2px solid #000;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    0 0 40px rgba(125,255,66,0.2),
+    0 20px 60px rgba(0,0,0,0.9);
+  padding: 6px;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+.render-header {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--acid-green);
+  padding: 6px 10px;
+  text-shadow: 0 0 8px rgba(125,255,66,0.5);
+  border-bottom: 1px solid var(--metal-lo);
+  margin-bottom: 6px;
+}
+.render-window canvas {
+  display: block;
+  background: #000;
+  image-rendering: pixelated;
+  border: 1px solid var(--metal-lo);
+}
+.render-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 4px 2px;
+  font-family: var(--font-lcd);
+  color: var(--acid-green);
+  letter-spacing: 2px;
+}

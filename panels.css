@@ -1,0 +1,411 @@
+/* =========================================================
+   WEIRD SCIENCE FICTION — panels.css
+   Beveled metal panels, viewport frame, mechanical borders
+   ========================================================= */
+
+/* -------- Panel base (chunky beveled metal) -------- */
+.panel {
+  position: relative;
+  background:
+    linear-gradient(165deg, #4a4540 0%, #2a2520 40%, #1a1614 100%);
+  border: 2px solid #000;
+  border-radius: 4px;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.12),
+    inset 0 -2px 0 rgba(0,0,0,0.8),
+    inset 2px 0 0 rgba(255,255,255,0.04),
+    inset -2px 0 0 rgba(0,0,0,0.5),
+    0 4px 12px rgba(0,0,0,0.6);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px;
+}
+
+/* Corner rivets on every panel */
+.panel::before,
+.panel::after {
+  content: '';
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 30%, #6a6258 10%, #1a1714 70%, #000 100%);
+  box-shadow: inset 0 -1px 1px rgba(0,0,0,0.8), 0 0 0 1px #000;
+  z-index: 2;
+}
+.panel::before { top: 4px; left: 4px; }
+.panel::after { top: 4px; right: 4px; }
+
+/* Custom scrollbar for panels */
+.panel::-webkit-scrollbar { width: 8px; }
+.panel::-webkit-scrollbar-track { background: #0a0807; }
+.panel::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #3a3530, #1a1714);
+  border: 1px solid #000;
+}
+
+/* -------- Left tool rail -------- */
+.tool-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 6px 6px;
+  align-items: stretch;
+}
+.rail-header {
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--lcd-amber);
+  text-align: center;
+  padding: 4px 0 2px;
+  margin-top: 4px;
+  border-bottom: 1px solid var(--metal-lo);
+  text-shadow: 0 0 4px rgba(255,176,32,0.4);
+}
+.rail-spacer { flex: 1; min-height: 10px; }
+
+/* Tool buttons - chunky lozenge pill shapes like Bryce */
+.tool-btn {
+  font-family: var(--font-lcd);
+  color: var(--metal-hi);
+  background:
+    linear-gradient(180deg, #6a6258 0%, #3a3530 50%, #1e1b18 100%);
+  border: 1px solid #000;
+  border-radius: 14px;
+  padding: 6px 4px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.25),
+    inset 0 -1px 1px rgba(0,0,0,0.8),
+    0 1px 2px rgba(0,0,0,0.5);
+  transition: all 0.08s;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+.tool-btn:hover {
+  background: linear-gradient(180deg, #7a7268 0%, #4a4540 50%, #2a2520 100%);
+  color: #fff;
+}
+.tool-btn:active, .tool-btn.active {
+  background:
+    linear-gradient(180deg, #1a1714 0%, #2a2520 50%, #3a3530 100%);
+  box-shadow:
+    inset 0 2px 3px rgba(0,0,0,0.9),
+    inset 0 -1px 0 rgba(255,255,255,0.06);
+  color: var(--acid-green);
+  text-shadow: 0 0 6px rgba(125,255,66,0.6);
+}
+.tool-btn .tool-icon {
+  font-size: 18px;
+  line-height: 1;
+  filter: drop-shadow(0 1px 0 #000);
+}
+.tool-btn .tool-label {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  font-weight: bold;
+}
+.tool-btn.small {
+  padding: 4px 4px;
+  font-size: 10px;
+  letter-spacing: 1px;
+  border-radius: 10px;
+}
+
+/* -------- Viewport frame (THE centerpiece - broken CRT feel) -------- */
+.viewport-frame {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.viewport-bezel {
+  position: relative;
+  flex: 1;
+  background:
+    linear-gradient(160deg, #3a3530 0%, #1a1614 100%);
+  border: 2px solid #000;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.15),
+    inset 0 -2px 0 rgba(0,0,0,0.8),
+    inset 3px 0 0 rgba(255,255,255,0.04),
+    inset -3px 0 0 rgba(0,0,0,0.5),
+    0 6px 20px rgba(0,0,0,0.7);
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Ornate corner rivets */
+.viewport-corner {
+  position: absolute;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, #8a8278 0%, #3a3530 40%, #0a0807 85%);
+  box-shadow:
+    inset 0 1px 1px rgba(255,255,255,0.3),
+    inset 0 -1px 1px rgba(0,0,0,0.9),
+    0 0 0 2px #000,
+    0 2px 3px rgba(0,0,0,0.6);
+  z-index: 3;
+}
+.viewport-corner::after {
+  content: ''; position: absolute; inset: 4px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, #000 0%, #000 40%, transparent 70%);
+}
+.viewport-corner.tl { top: 3px; left: 3px; }
+.viewport-corner.tr { top: 3px; right: 3px; }
+.viewport-corner.bl { bottom: 3px; left: 3px; }
+.viewport-corner.br { bottom: 3px; right: 3px; }
+
+/* The actual screen - inset, glowing, CRT */
+.viewport-screen {
+  position: relative;
+  width: 100%; height: 100%;
+  background: #000;
+  border: 2px solid #000;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow:
+    inset 0 0 40px rgba(0,0,0,0.95),
+    inset 0 0 8px rgba(30,58,72,0.8),
+    0 0 0 1px rgba(138,230,255,0.1);
+}
+.viewport-screen::before {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.4) 100%);
+  z-index: 5;
+}
+.viewport-screen::after {
+  content: '';
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0,
+    rgba(0,0,0,0) 2px,
+    rgba(138,230,255,0.04) 3px,
+    rgba(0,0,0,0) 4px
+  );
+  z-index: 5;
+}
+
+#mainCanvas {
+  display: block;
+  width: 100%; height: 100%;
+  cursor: crosshair;
+}
+
+/* HUD overlay */
+.viewport-hud {
+  position: absolute;
+  top: 8px; left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-lcd);
+  font-size: 13px;
+  color: var(--acid-green);
+  text-shadow: 0 0 5px var(--acid-green);
+  letter-spacing: 1.5px;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.viewport-crosshair {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 16px; height: 16px;
+  margin: -8px 0 0 -8px;
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0.4;
+}
+.viewport-crosshair::before,
+.viewport-crosshair::after {
+  content: ''; position: absolute;
+  background: var(--acid-green);
+  box-shadow: 0 0 4px var(--acid-green);
+}
+.viewport-crosshair::before { left: 50%; top: 0; width: 1px; height: 100%; margin-left: -0.5px; }
+.viewport-crosshair::after  { top: 50%; left: 0; height: 1px; width: 100%; margin-top: -0.5px; }
+
+.viewport-watermark {
+  position: absolute;
+  bottom: 6px; right: 10px;
+  font-family: var(--font-type);
+  font-size: 10px;
+  color: rgba(255,106,26,0.5);
+  letter-spacing: 2px;
+  text-shadow: 0 0 4px rgba(255,106,26,0.3);
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* Viewport control strip */
+.viewport-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background:
+    linear-gradient(180deg, #3a3530 0%, #1a1714 100%);
+  border: 2px solid #000;
+  border-radius: 4px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 -1px 0 rgba(0,0,0,0.8),
+    0 2px 4px rgba(0,0,0,0.5);
+  font-family: var(--font-lcd);
+}
+.vp-spacer { flex: 1; }
+
+.vp-btn {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--metal-hi);
+  background: linear-gradient(180deg, #6a6258, #2a2520);
+  border: 1px solid #000;
+  border-radius: 10px;
+  padding: 5px 10px;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    inset 0 -1px 0 rgba(0,0,0,0.8);
+}
+.vp-btn:hover { color: #fff; }
+.vp-btn:active {
+  box-shadow: inset 0 2px 3px rgba(0,0,0,0.9);
+  background: linear-gradient(180deg, #1a1714, #3a3530);
+}
+.vp-btn.big {
+  background: linear-gradient(180deg, #ff8040, #c02010 60%, #600810);
+  color: #fff;
+  padding: 6px 14px;
+  text-shadow: 0 1px 0 #000, 0 0 6px rgba(255,60,20,0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255,220,180,0.4),
+    inset 0 -2px 0 rgba(0,0,0,0.5),
+    0 0 10px rgba(255,80,20,0.4);
+}
+.vp-btn.big:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255,220,180,0.4),
+    inset 0 -2px 0 rgba(0,0,0,0.5),
+    0 0 18px rgba(255,100,40,0.7);
+}
+.vp-label {
+  font-size: 10px;
+  color: var(--lcd-amber);
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 4px rgba(255,176,32,0.4);
+}
+.vp-readout {
+  font-family: var(--font-lcd);
+  font-size: 13px;
+  color: var(--acid-green);
+  min-width: 38px;
+  text-align: right;
+  text-shadow: 0 0 4px var(--acid-green);
+  background: #000;
+  padding: 2px 6px;
+  border: 1px solid var(--metal-lo);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+}
+
+/* -------- Right properties panel -------- */
+.props-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 10px;
+}
+
+.prop-group {
+  background:
+    linear-gradient(175deg, #1a1714 0%, #0a0807 100%);
+  border: 1px solid #000;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    inset 0 -1px 0 rgba(0,0,0,0.6);
+  padding: 6px 8px 10px;
+  border-radius: 3px;
+}
+
+.prop-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 2px 6px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--metal-lo);
+}
+.prop-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--acid-green);
+  text-shadow: 0 0 5px rgba(125,255,66,0.5);
+}
+.prop-led {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ffc0a0, var(--acid-red));
+  box-shadow: 0 0 6px var(--acid-red), inset 0 -1px 1px rgba(0,0,0,0.6);
+  animation: propLedPulse 2.5s ease-in-out infinite;
+}
+@keyframes propLedPulse {
+  0%,100% { box-shadow: 0 0 4px var(--acid-red), inset 0 -1px 1px rgba(0,0,0,0.6); }
+  50%     { box-shadow: 0 0 10px var(--acid-red), inset 0 -1px 1px rgba(0,0,0,0.6); }
+}
+
+.prop-subgroup {
+  margin-bottom: 10px;
+}
+.sub-label {
+  font-family: var(--font-display);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--lcd-amber);
+  text-shadow: 0 0 3px rgba(255,176,32,0.4);
+  padding: 3px 0;
+  margin-bottom: 4px;
+  border-left: 2px solid var(--lcd-amber);
+  padding-left: 6px;
+}
+
+.scene-list {
+  max-height: 80px;
+  overflow-y: auto;
+  background: #000;
+  border: 1px solid var(--metal-lo);
+  padding: 4px;
+  font-size: 12px;
+  color: var(--screen-text);
+}
+.scene-list div {
+  padding: 2px 4px;
+  border-bottom: 1px dotted var(--metal-lo);
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+.scene-list div:hover { background: rgba(125,255,66,0.15); color: var(--acid-green); }
+.scene-list::-webkit-scrollbar { width: 6px; }
+.scene-list::-webkit-scrollbar-thumb { background: var(--metal-lo); }

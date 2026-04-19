@@ -1,267 +1,486 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Weird Science Fiction</title>
-  <link rel="stylesheet" href="./styles.css" />
+<meta charset="UTF-8">
+<title>Weird Science Fiction — Terrain Lab</title>
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/panels.css">
+<link rel="stylesheet" href="css/controls.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Orbitron:wght@700;900&family=Special+Elite&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="app">
 
-    <!-- Top toolbar (Bryce-inspired) -->
-    <header id="topbar">
-      <div class="brand">
-        <span class="hamb">≡</span>
-        <span class="title y2kTitle">Weird Science Fiction</span>
-      </div>
+<!-- Grain overlay -->
+<div class="grain"></div>
+<div class="scanlines"></div>
 
-      <nav class="menus">
-        <button class="menuBtn" data-menu="create">Create ▾</button>
-        <button class="menuBtn" data-menu="edit">Edit ▾</button>
-        <button class="menuBtn" data-menu="sky">Sky & Fog ▾</button>
-        <button class="menuBtn" data-menu="camera">Camera ▾</button>
-        <button class="menuBtn" id="finalRenderBtn">Final Render</button>
-      </nav>
-
-      <div class="topRight">
-        <div class="badge">WSF</div>
-      </div>
-    </header>
-
-    <!-- Main area -->
-    <main id="main">
-      <!-- Left “object palette” rail -->
-      <aside id="leftRail">
-        <div class="railSection">
-          <div class="thumb" id="sceneThumb">
-            <div class="thumbInner">Scene</div>
-          </div>
-        </div>
-
-        <div class="railSection">
-          <div class="railTitle">Objects</div>
-          <button class="railIcon" id="addSphereBtn" title="Sphere">●</button>
-          <button class="railIcon" id="addCubeBtn" title="Cube">■</button>
-          <button class="railIcon" id="addConeBtn" title="Cone">▲</button>
-          <button class="railIcon" id="addCylBtn" title="Cylinder">▮</button>
-          <button class="railIcon" id="scatterTreesBtn" title="Scatter Trees">🌲</button>
-          <button class="railIcon" id="scatterRocksBtn" title="Scatter Rocks">🪨</button>
-        </div>
-
-        <div class="railSection">
-          <div class="railTitle">Paint</div>
-          <button class="railIcon small" data-paint="height" title="Paint Height">⛰</button>
-          <button class="railIcon small" data-paint="erosion" title="Paint Erosion">≈</button>
-          <button class="railIcon small" data-paint="snow" title="Paint Snow">❄</button>
-          <button class="railIcon small" data-paint="veg" title="Paint Vegetation">✿</button>
-          <button class="railIcon small" data-paint="mood" title="Paint Mood Zone">☁</button>
-        </div>
-      </aside>
-
-      <!-- Center viewport -->
-      <section id="viewportWrap">
-        <div id="viewport"></div>
-
-        <!-- Right-side mini tools strip (visual only / some hooks) -->
-        <div id="rightStrip">
-          <button class="stripBtn" id="orbitBtn" title="Orbit">⟳</button>
-          <button class="stripBtn" id="panBtn" title="Pan">↔</button>
-          <button class="stripBtn" id="dollyBtn" title="Dolly">⇵</button>
-          <div class="stripSep"></div>
-          <button class="stripBtn" id="gridBtn" title="Grid">▦</button>
-          <button class="stripBtn" id="axesBtn" title="Axes">✛</button>
-        </div>
-      </section>
-
-      <!-- Right inspector panels -->
-      <aside id="rightPanels">
-        <div class="panel">
-          <div class="panelHeader">Terrain</div>
-          <div class="panelBody">
-            <div class="row">
-              <label>Frequency</label>
-              <input id="noiseFreq" type="range" min="0.2" max="6" step="0.01" value="2.0" />
-              <span class="val" id="noiseFreqVal"></span>
-            </div>
-            <div class="row">
-              <label>Amplitude</label>
-              <input id="noiseAmp" type="range" min="1" max="30" step="0.1" value="14" />
-              <span class="val" id="noiseAmpVal"></span>
-            </div>
-            <div class="row">
-              <label>Octaves</label>
-              <input id="noiseOct" type="range" min="1" max="8" step="1" value="5" />
-              <span class="val" id="noiseOctVal"></span>
-            </div>
-            <div class="row">
-              <label>Plateau</label>
-              <input id="plateau" type="range" min="0" max="1" step="0.01" value="0.12" />
-              <span class="val" id="plateauVal"></span>
-            </div>
-            <div class="row">
-              <label>Smoothing</label>
-              <input id="smooth" type="range" min="0" max="1" step="0.01" value="0.15" />
-              <span class="val" id="smoothVal"></span>
-            </div>
-            <div class="row">
-              <label>Erosion (fake)</label>
-              <input id="erosion" type="range" min="0" max="1" step="0.01" value="0.25" />
-              <span class="val" id="erosionVal"></span>
-            </div>
-            <div class="row">
-              <button id="regenTerrainBtn" class="primary">Regenerate</button>
-              <button id="resetTerrainBtn">Reset</button>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="row">
-              <label>Paint Brush</label>
-              <input id="brushSize" type="range" min="0.5" max="12" step="0.1" value="3.2" />
-              <span class="val" id="brushSizeVal"></span>
-            </div>
-            <div class="row">
-              <label>Strength</label>
-              <input id="brushStrength" type="range" min="0" max="1" step="0.01" value="0.35" />
-              <span class="val" id="brushStrengthVal"></span>
-            </div>
-            <div class="row">
-              <label>Mode</label>
-              <select id="paintMode">
-                <option value="height">Height</option>
-                <option value="erosion">Erosion</option>
-                <option value="snow">Snow</option>
-                <option value="veg">Vegetation</option>
-                <option value="mood">Mood (Fog)</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panelHeader">Sky & Atmosphere</div>
-          <div class="panelBody">
-            <div class="row">
-              <label>Time of Day</label>
-              <input id="timeOfDay" type="range" min="0" max="1" step="0.001" value="0.62" />
-              <span class="val" id="timeOfDayVal"></span>
-            </div>
-            <div class="row">
-              <label>Fog Density</label>
-              <input id="fogDensity" type="range" min="0" max="0.08" step="0.0005" value="0.018" />
-              <span class="val" id="fogDensityVal"></span>
-            </div>
-            <div class="row">
-              <label>Clouds</label>
-              <input id="cloudAmount" type="range" min="0" max="1" step="0.01" value="0.55" />
-              <span class="val" id="cloudAmountVal"></span>
-            </div>
-            <div class="row">
-              <label>Sky Zenith</label>
-              <input id="skyZenith" type="color" value="#2b4a8f" />
-            </div>
-            <div class="row">
-              <label>Sky Horizon</label>
-              <input id="skyHorizon" type="color" value="#d7b58a" />
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panelHeader">Materials</div>
-          <div class="panelBody">
-            <div class="row">
-              <label>Preset</label>
-              <select id="matPreset">
-                <option value="grass">Grass</option>
-                <option value="rock">Rock</option>
-                <option value="snow">Snow</option>
-                <option value="water">Water</option>
-                <option value="metal">Metal</option>
-              </select>
-            </div>
-            <div class="row">
-              <label>Variation</label>
-              <input id="matVar" type="range" min="0" max="1" step="0.01" value="0.25" />
-              <span class="val" id="matVarVal"></span>
-            </div>
-            <div class="row">
-              <label>Roughness</label>
-              <input id="matRough" type="range" min="0" max="1" step="0.01" value="0.85" />
-              <span class="val" id="matRoughVal"></span>
-            </div>
-            <div class="row">
-              <label>Scale</label>
-              <input id="matScale" type="range" min="0.2" max="8" step="0.01" value="2.2" />
-              <span class="val" id="matScaleVal"></span>
-            </div>
-            <div class="row">
-              <label>Blend (Slope)</label>
-              <input id="blendSlope" type="range" min="0" max="1" step="0.01" value="0.55" />
-              <span class="val" id="blendSlopeVal"></span>
-            </div>
-            <div class="row">
-              <label>Blend (Height)</label>
-              <input id="blendHeight" type="range" min="0" max="1" step="0.01" value="0.48" />
-              <span class="val" id="blendHeightVal"></span>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="panelHeader">Camera & Render</div>
-          <div class="panelBody">
-            <div class="row">
-              <label>Preset</label>
-              <select id="camPreset">
-                <option value="wide">Wide</option>
-                <option value="tele">Telephoto</option>
-                <option value="aerial">Aerial</option>
-              </select>
-            </div>
-            <div class="row">
-              <label>Depth of Field</label>
-              <input id="dofToggle" type="checkbox" />
-            </div>
-            <div class="row">
-              <label>Exposure</label>
-              <input id="exposure" type="range" min="0.2" max="2.5" step="0.01" value="1.05" />
-              <span class="val" id="exposureVal"></span>
-            </div>
-            <div class="row">
-              <button id="snapshotBtn">Snapshot PNG</button>
-            </div>
-          </div>
-        </div>
-      </aside>
-    </main>
-
-    <!-- Bottom playback-ish strip (visual homage) -->
-    <footer id="bottombar">
-      <div class="bottomLeft">
-        <div class="tinyLabel">Plane</div>
-        <div class="tinyValue" id="statusText">Ready</div>
-      </div>
-
-      <div class="transport">
-        <button class="tbtn">⏮</button>
-        <button class="tbtn">⏪</button>
-        <button class="tbtn">⏯</button>
-        <button class="tbtn">⏩</button>
-        <button class="tbtn">⏭</button>
-      </div>
-
-      <div class="bottomRight">
-        <div class="sliderWrap">
-          <span class="tinyLabel">Time</span>
-          <input id="timeline" type="range" min="0" max="1" step="0.001" value="0.62" />
-        </div>
-      </div>
-    </footer>
-
+<!-- Title bar -->
+<header class="titlebar">
+  <div class="titlebar-left">
+    <div class="logo-lump"></div>
+    <h1 class="title-text">WEIRD SCIENCE FICTION <span class="title-sub">v1.0 · TERRAIN LAB</span></h1>
   </div>
+  <div class="titlebar-right">
+    <div class="status-lamp" id="statusLamp"></div>
+    <span class="status-text" id="statusText">READY</span>
+  </div>
+</header>
 
-  <script type="module" src="./main.js"></script>
+<!-- Main workspace -->
+<main class="workspace">
+
+  <!-- LEFT TOOL RAIL -->
+  <aside class="panel tool-rail">
+    <div class="rail-header">TOOLS</div>
+    <button class="tool-btn active" data-tool="terrain" title="Terrain">
+      <span class="tool-icon">▲</span><span class="tool-label">TERRAIN</span>
+    </button>
+    <button class="tool-btn" data-tool="sky" title="Sky">
+      <span class="tool-icon">☀</span><span class="tool-label">SKY</span>
+    </button>
+    <button class="tool-btn" data-tool="objects" title="Objects">
+      <span class="tool-icon">⬢</span><span class="tool-label">OBJECTS</span>
+    </button>
+    <button class="tool-btn" data-tool="materials" title="Materials">
+      <span class="tool-icon">◈</span><span class="tool-label">MATERIAL</span>
+    </button>
+    <button class="tool-btn" data-tool="paint" title="Paint">
+      <span class="tool-icon">✦</span><span class="tool-label">PAINT</span>
+    </button>
+    <button class="tool-btn" data-tool="camera" title="Camera">
+      <span class="tool-icon">◉</span><span class="tool-label">CAMERA</span>
+    </button>
+
+    <div class="rail-spacer"></div>
+
+    <div class="rail-header">VIEW</div>
+    <button class="tool-btn small" data-view="persp">PERSP</button>
+    <button class="tool-btn small" data-view="top">TOP</button>
+    <button class="tool-btn small" data-view="front">FRONT</button>
+    <button class="tool-btn small" data-view="side">SIDE</button>
+  </aside>
+
+  <!-- CENTER VIEWPORT -->
+  <section class="viewport-frame">
+    <div class="viewport-bezel">
+      <div class="viewport-corner tl"></div>
+      <div class="viewport-corner tr"></div>
+      <div class="viewport-corner bl"></div>
+      <div class="viewport-corner br"></div>
+
+      <div class="viewport-screen">
+        <canvas id="mainCanvas"></canvas>
+        <div class="viewport-hud">
+          <span id="hudCoords">X:0.00 Y:0.00 Z:0.00</span>
+          <span id="hudFps">-- fps</span>
+        </div>
+        <div class="viewport-crosshair"></div>
+        <div class="viewport-watermark">WSF · Y2K · DRAFT</div>
+      </div>
+    </div>
+
+    <!-- Viewport footer controls -->
+    <div class="viewport-controls">
+      <button class="vp-btn" id="renderBtn">RENDER</button>
+      <button class="vp-btn" id="wireBtn">WIRE</button>
+      <button class="vp-btn" id="resetCamBtn">RESET CAM</button>
+      <div class="vp-spacer"></div>
+      <label class="vp-label">EXPOSURE</label>
+      <input type="range" class="dial" id="exposure" min="0" max="200" value="100">
+      <span class="vp-readout" id="exposureVal">1.00</span>
+      <div class="vp-spacer"></div>
+      <button class="vp-btn big" id="finalRenderBtn">⬢ FINAL RENDER</button>
+    </div>
+  </section>
+
+  <!-- RIGHT PROPERTIES PANEL -->
+  <aside class="panel props-panel">
+
+    <!-- TERRAIN PANEL -->
+    <div class="prop-group" data-panel="terrain">
+      <div class="prop-header">
+        <span class="prop-title">TERRAIN GENERATOR</span>
+        <span class="prop-led"></span>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">FRACTAL NOISE</div>
+        <div class="slider-row">
+          <label>FREQ</label>
+          <input type="range" id="terrFreq" min="1" max="200" value="40">
+          <span class="val" id="terrFreqV">0.40</span>
+        </div>
+        <div class="slider-row">
+          <label>AMPL</label>
+          <input type="range" id="terrAmp" min="0" max="200" value="80">
+          <span class="val" id="terrAmpV">0.80</span>
+        </div>
+        <div class="slider-row">
+          <label>OCTV</label>
+          <input type="range" id="terrOct" min="1" max="8" value="5">
+          <span class="val" id="terrOctV">5</span>
+        </div>
+        <div class="slider-row">
+          <label>SEED</label>
+          <input type="range" id="terrSeed" min="0" max="9999" value="1337">
+          <span class="val" id="terrSeedV">1337</span>
+        </div>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">MODIFIERS</div>
+        <div class="slider-row">
+          <label>EROS</label>
+          <input type="range" id="terrErode" min="0" max="100" value="20">
+          <span class="val" id="terrErodeV">0.20</span>
+        </div>
+        <div class="slider-row">
+          <label>PLAT</label>
+          <input type="range" id="terrPlateau" min="0" max="100" value="0">
+          <span class="val" id="terrPlateauV">0.00</span>
+        </div>
+        <div class="slider-row">
+          <label>SMTH</label>
+          <input type="range" id="terrSmooth" min="0" max="100" value="10">
+          <span class="val" id="terrSmoothV">0.10</span>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="chunky-btn" id="terrNewBtn">NEW</button>
+        <button class="chunky-btn" id="terrRandBtn">RAND</button>
+      </div>
+    </div>
+
+    <!-- SKY PANEL -->
+    <div class="prop-group hidden" data-panel="sky">
+      <div class="prop-header">
+        <span class="prop-title">SKY & ATMOSPHERE</span>
+        <span class="prop-led"></span>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">SUN</div>
+        <div class="slider-row">
+          <label>TIME</label>
+          <input type="range" id="skyTime" min="0" max="240" value="120">
+          <span class="val" id="skyTimeV">12:00</span>
+        </div>
+        <div class="slider-row">
+          <label>AZIM</label>
+          <input type="range" id="skyAzim" min="0" max="360" value="140">
+          <span class="val" id="skyAzimV">140°</span>
+        </div>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">GRADIENT</div>
+        <div class="color-row">
+          <label>ZNTH</label>
+          <input type="color" id="skyZenith" value="#1a3a6e">
+        </div>
+        <div class="color-row">
+          <label>HRZN</label>
+          <input type="color" id="skyHorizon" value="#d68a5c">
+        </div>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">FOG & CLOUDS</div>
+        <div class="slider-row">
+          <label>FOG</label>
+          <input type="range" id="skyFog" min="0" max="100" value="25">
+          <span class="val" id="skyFogV">0.25</span>
+        </div>
+        <div class="slider-row">
+          <label>CLD</label>
+          <input type="range" id="skyClouds" min="0" max="100" value="50">
+          <span class="val" id="skyCloudsV">0.50</span>
+        </div>
+        <div class="slider-row">
+          <label>CSPD</label>
+          <input type="range" id="skyCloudSpd" min="0" max="100" value="20">
+          <span class="val" id="skyCloudSpdV">0.20</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBJECTS PANEL -->
+    <div class="prop-group hidden" data-panel="objects">
+      <div class="prop-header">
+        <span class="prop-title">OBJECT SYSTEM</span>
+        <span class="prop-led"></span>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">PRIMITIVES</div>
+        <div class="prim-grid">
+          <button class="prim-btn" data-prim="sphere">◉<br>SPHR</button>
+          <button class="prim-btn" data-prim="cube">◼<br>CUBE</button>
+          <button class="prim-btn" data-prim="cone">▲<br>CONE</button>
+          <button class="prim-btn" data-prim="cyl">◎<br>CYL</button>
+          <button class="prim-btn" data-prim="rock">⬢<br>ROCK</button>
+          <button class="prim-btn" data-prim="tree">♣<br>TREE</button>
+        </div>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">BOOLEAN OPS</div>
+        <div class="button-row">
+          <button class="chunky-btn small" id="boolUnion">UNION</button>
+          <button class="chunky-btn small" id="boolSub">SUBTR</button>
+        </div>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">SCATTER TREES</div>
+        <div class="slider-row">
+          <label>DENS</label>
+          <input type="range" id="scatterDens" min="0" max="200" value="60">
+          <span class="val" id="scatterDensV">60</span>
+        </div>
+        <div class="slider-row">
+          <label>SLPE</label>
+          <input type="range" id="scatterSlope" min="0" max="100" value="40">
+          <span class="val" id="scatterSlopeV">0.40</span>
+        </div>
+        <div class="slider-row">
+          <label>HMIN</label>
+          <input type="range" id="scatterHmin" min="0" max="100" value="10">
+          <span class="val" id="scatterHminV">0.10</span>
+        </div>
+        <div class="slider-row">
+          <label>HMAX</label>
+          <input type="range" id="scatterHmax" min="0" max="100" value="70">
+          <span class="val" id="scatterHmaxV">0.70</span>
+        </div>
+        <button class="chunky-btn" id="scatterBtn">SCATTER</button>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">SCENE LIST</div>
+        <div class="scene-list" id="sceneList"></div>
+      </div>
+    </div>
+
+    <!-- MATERIALS PANEL -->
+    <div class="prop-group hidden" data-panel="materials">
+      <div class="prop-header">
+        <span class="prop-title">MATERIAL PRESETS</span>
+        <span class="prop-led"></span>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">TERRAIN LAYERS</div>
+        <div class="mat-grid">
+          <button class="mat-swatch" data-mat="rock" style="--c1:#6b6358;--c2:#3d372f">ROCK</button>
+          <button class="mat-swatch" data-mat="snow" style="--c1:#ecf2f7;--c2:#b8c4d0">SNOW</button>
+          <button class="mat-swatch" data-mat="grass" style="--c1:#4a6b2a;--c2:#2a4015">GRASS</button>
+          <button class="mat-swatch" data-mat="water" style="--c1:#1e4a6e;--c2:#0a2238">WATER</button>
+          <button class="mat-swatch" data-mat="metal" style="--c1:#8b8580;--c2:#3a3530">METAL</button>
+          <button class="mat-swatch" data-mat="sand" style="--c1:#c9a875;--c2:#8a6d40">SAND</button>
+        </div>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">PARAMETERS</div>
+        <div class="slider-row">
+          <label>VARI</label>
+          <input type="range" id="matVar" min="0" max="100" value="30">
+          <span class="val" id="matVarV">0.30</span>
+        </div>
+        <div class="slider-row">
+          <label>RUFF</label>
+          <input type="range" id="matRough" min="0" max="100" value="60">
+          <span class="val" id="matRoughV">0.60</span>
+        </div>
+        <div class="slider-row">
+          <label>SCAL</label>
+          <input type="range" id="matScale" min="1" max="200" value="50">
+          <span class="val" id="matScaleV">0.50</span>
+        </div>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">BLEND BY SLOPE/HEIGHT</div>
+        <div class="slider-row">
+          <label>SLOPE</label>
+          <input type="range" id="matSlope" min="0" max="100" value="50">
+          <span class="val" id="matSlopeV">0.50</span>
+        </div>
+        <div class="slider-row">
+          <label>SNOW</label>
+          <input type="range" id="matSnowLine" min="0" max="100" value="75">
+          <span class="val" id="matSnowLineV">0.75</span>
+        </div>
+        <div class="slider-row">
+          <label>WATER</label>
+          <input type="range" id="matWaterLvl" min="0" max="100" value="20">
+          <span class="val" id="matWaterLvlV">0.20</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAINT PANEL -->
+    <div class="prop-group hidden" data-panel="paint">
+      <div class="prop-header">
+        <span class="prop-title">TERRAIN PAINT</span>
+        <span class="prop-led"></span>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">MODE</div>
+        <div class="paint-grid">
+          <button class="paint-btn active" data-paint="height-up">⬆ RAISE</button>
+          <button class="paint-btn" data-paint="height-dn">⬇ LOWER</button>
+          <button class="paint-btn" data-paint="smooth">≈ SMOOTH</button>
+          <button class="paint-btn" data-paint="erode">⌇ ERODE</button>
+          <button class="paint-btn" data-paint="snow">❄ SNOW</button>
+          <button class="paint-btn" data-paint="veg">♣ VEG</button>
+          <button class="paint-btn" data-paint="fog">☁ FOG</button>
+          <button class="paint-btn" data-paint="sun">☀ SUN</button>
+        </div>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">BRUSH</div>
+        <div class="slider-row">
+          <label>SIZE</label>
+          <input type="range" id="brushSize" min="2" max="40" value="10">
+          <span class="val" id="brushSizeV">10</span>
+        </div>
+        <div class="slider-row">
+          <label>STRN</label>
+          <input type="range" id="brushStr" min="1" max="100" value="30">
+          <span class="val" id="brushStrV">0.30</span>
+        </div>
+        <div class="slider-row">
+          <label>FALL</label>
+          <input type="range" id="brushFall" min="0" max="100" value="50">
+          <span class="val" id="brushFallV">0.50</span>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="chunky-btn" id="paintClearBtn">CLR PAINT</button>
+      </div>
+    </div>
+
+    <!-- CAMERA PANEL -->
+    <div class="prop-group hidden" data-panel="camera">
+      <div class="prop-header">
+        <span class="prop-title">CAMERA / RENDER</span>
+        <span class="prop-led"></span>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">PRESETS</div>
+        <div class="button-row">
+          <button class="chunky-btn small" data-cam="wide">WIDE</button>
+          <button class="chunky-btn small" data-cam="tele">TELE</button>
+          <button class="chunky-btn small" data-cam="aerial">AERL</button>
+        </div>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">LENS</div>
+        <div class="slider-row">
+          <label>FOV</label>
+          <input type="range" id="camFov" min="20" max="120" value="60">
+          <span class="val" id="camFovV">60°</span>
+        </div>
+        <div class="slider-row">
+          <label>DOF</label>
+          <input type="range" id="camDof" min="0" max="100" value="0">
+          <span class="val" id="camDofV">0.00</span>
+        </div>
+        <div class="slider-row">
+          <label>FOCS</label>
+          <input type="range" id="camFocus" min="10" max="200" value="80">
+          <span class="val" id="camFocusV">0.80</span>
+        </div>
+      </div>
+
+      <div class="prop-subgroup">
+        <div class="sub-label">RENDER QUALITY</div>
+        <div class="slider-row">
+          <label>SAMP</label>
+          <input type="range" id="rndSamples" min="1" max="16" value="4">
+          <span class="val" id="rndSamplesV">4</span>
+        </div>
+        <div class="slider-row">
+          <label>SHAD</label>
+          <input type="range" id="rndShadow" min="0" max="100" value="60">
+          <span class="val" id="rndShadowV">0.60</span>
+        </div>
+        <label class="check-row">
+          <input type="checkbox" id="rndCloudShadow" checked>
+          <span>CLOUD SHADOWS</span>
+        </label>
+        <label class="check-row">
+          <input type="checkbox" id="rndDof">
+          <span>DEPTH OF FIELD</span>
+        </label>
+      </div>
+    </div>
+
+  </aside>
+
+</main>
+
+<!-- Bottom mood/info strip -->
+<footer class="moodbar">
+  <div class="mood-section">
+    <span class="mood-label">SCENE</span>
+    <span class="mood-val" id="moodScene">alpine_draft_01</span>
+  </div>
+  <div class="mood-section">
+    <span class="mood-label">VERTS</span>
+    <span class="mood-val" id="moodVerts">0</span>
+  </div>
+  <div class="mood-section">
+    <span class="mood-label">OBJ</span>
+    <span class="mood-val" id="moodObj">0</span>
+  </div>
+  <div class="mood-section">
+    <span class="mood-label">MEM</span>
+    <div class="memory-bar"><div class="memory-fill" id="memFill"></div></div>
+  </div>
+  <div class="mood-section grow">
+    <span class="mood-label">LOG</span>
+    <span class="mood-val" id="moodLog">system nominal · welcome to WSF</span>
+  </div>
+  <div class="mood-section">
+    <span class="mood-blink"></span>
+    <span class="mood-val">REC</span>
+  </div>
+</footer>
+
+<!-- Render overlay -->
+<div class="render-overlay hidden" id="renderOverlay">
+  <div class="render-window">
+    <div class="render-header">FINAL RENDER · WEIRD SCIENCE FICTION</div>
+    <canvas id="renderCanvas"></canvas>
+    <div class="render-footer">
+      <span id="renderProgress">0%</span>
+      <button class="chunky-btn small" id="renderCloseBtn">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts in order -->
+<script src="js/noise.js"></script>
+<script src="js/terrain.js"></script>
+<script src="js/sky.js"></script>
+<script src="js/objects.js"></script>
+<script src="js/materials.js"></script>
+<script src="js/camera.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/paint.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+
 </body>
 </html>
