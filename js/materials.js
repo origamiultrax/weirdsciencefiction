@@ -1,119 +1,133 @@
-/* =========================================================
-   materials.js — Material presets & slope/height blending
-   ========================================================= */
-(function (global) {
-  const W = global.WSF;
+// materials.js — Terrain material presets & vertex color generation
+import { PerlinNoise } from './noise.js';
 
-  const PRESETS = {
-    rock:  { c1: [107, 99, 88],   c2: [61, 55, 47],   rough: 0.85 },
-    snow:  { c1: [236, 242, 247], c2: [184, 196, 208], rough: 0.15 },
-    grass: { c1: [74, 107, 42],   c2: [42, 64, 21],   rough: 0.75 },
-    water: { c1: [30, 74, 110],   c2: [10, 34, 56],   rough: 0.10 },
-    metal: { c1: [139, 133, 128], c2: [58, 53, 48],   rough: 0.30 },
-    sand:  { c1: [201, 168, 117], c2: [138, 109, 64], rough: 0.70 },
-  };
+const PRESETS = {
+  alpine: {
+    low:  [0x4a, 0x6b, 0x2a], // grass
+    mid:  [0x8a, 0x7a, 0x68], // rock
+    high: [0xec, 0xf2, 0xf7], // snow
+    water: [0x1e, 0x4a, 0x6e],
+  },
+  mossy: {
+    low:  [0x3a, 0x5a, 0x20], // deep moss
+    mid:  [0x6a, 0x8a, 0x40], // bright moss
+    high: [0x5a, 0x5a, 0x50], // stone caps
+    water: [0x20, 0x4a, 0x40],
+  },
+  desert: {
+    low:  [0xc9, 0xa8, 0x75], // sand
+    mid:  [0xa8, 0x80, 0x50], // ochre
+    high: [0x60, 0x38, 0x20], // dark rock
+    water: [0x3a, 0x6a, 0x80],
+  },
+  volcanic: {
+    low:  [0x3a, 0x15, 0x10], // black rock
+    mid:  [0x60, 0x20, 0x18], // dark red
+    high: [0xff, 0x60, 0x20], // lava highlight
+    water: [0x30, 0x08, 0x04], // lava dark
+  },
+  alien: {
+    low:  [0x20, 0xff, 0xa0], // acid green
+    mid:  [0x6a, 0x2a, 0x8a], // purple
+    high: [0xff, 0x40, 0xc0], // magenta
+    water: [0x40, 0x00, 0x60],
+  },
+  arctic: {
+    low:  [0x60, 0x80, 0xa0], // cold stone
+    mid:  [0xa8, 0xc8, 0xe8], // ice blue
+    high: [0xff, 0xff, 0xff], // white
+    water: [0x10, 0x30, 0x50],
+  },
+};
 
-  class MaterialSystem {
-    constructor() {
-      this.current = 'rock';
-      this.params = {
-        variation: 0.30,
-        roughness: 0.60,
-        scale: 0.50,
-        slopeBlend: 0.50,
-        snowLine: 0.75,
-        waterLevel: 0.20,
-      };
-      this.noise = new W.PerlinNoise(2024);
-    }
-
-    setPreset(name) { if (PRESETS[name]) this.current = name; }
-    setParam(key, val) { this.params[key] = val; }
-
-    // Get final blended color for a terrain point
-    // Returns [r, g, b] in [0,1]
-    sampleColor(terrain, u, v) {
-      const h = terrain.sample(u, v);
-      const slope = terrain.slope(u, v);
-      const { snowLine, waterLevel, slopeBlend, scale, variation } = this.params;
-
-      // Extra painted channels
-      const snowPaint = Math.max(0, terrain.samplePaint(terrain.snow, u, v));
-      const vegPaint  = terrain.samplePaint(terrain.veg, u, v);
-
-      // Base preset (user selection - acts as the "dominant" coat)
-      const base = PRESETS[this.current];
-
-      // Noise for color variation
-      const n = (this.noise.fbm(u * 20 / Math.max(0.1, scale), v * 20 / Math.max(0.1, scale), 3) + 1) * 0.5;
-      const mixT = n;
-      let r = base.c1[0] * (1 - mixT) + base.c2[0] * mixT;
-      let g = base.c1[1] * (1 - mixT) + base.c2[1] * mixT;
-      let b = base.c1[2] * (1 - mixT) + base.c2[2] * mixT;
-
-      // Apply variation (randomness)
-      const rand = (this.noise.noise2D(u * 50, v * 50) + 1) * 0.5;
-      const varFactor = 1 + (rand - 0.5) * variation * 0.4;
-      r *= varFactor; g *= varFactor; b *= varFactor;
-
-      // --- Height/slope based blending (the Bryce magic) ---
-
-      // Water below waterLevel
-      if (h < waterLevel) {
-        const wt = Math.min(1, (waterLevel - h) * 4);
-        const w = PRESETS.water;
-        r = r * (1 - wt) + w.c1[0] * wt;
-        g = g * (1 - wt) + w.c1[1] * wt;
-        b = b * (1 - wt) + w.c1[2] * wt;
-      }
-
-      // Grass on low flat areas (if preset isn't already grass/snow)
-      if (this.current !== 'snow' && this.current !== 'water') {
-        const lowFlat = Math.max(0, (0.55 - h)) * Math.max(0, (1 - slope * (1 + slopeBlend)));
-        if (lowFlat > 0.05) {
-          const gt = Math.min(1, lowFlat * 2);
-          const gr = PRESETS.grass;
-          r = r * (1 - gt) + gr.c1[0] * gt;
-          g = g * (1 - gt) + gr.c1[1] * gt;
-          b = b * (1 - gt) + gr.c1[2] * gt;
-        }
-      }
-
-      // Rock on steep slopes (if above water)
-      if (h > waterLevel && slope > 0.3) {
-        const rt = Math.min(1, (slope - 0.3) * 2 * slopeBlend);
-        const rk = PRESETS.rock;
-        r = r * (1 - rt) + rk.c1[0] * rt;
-        g = g * (1 - rt) + rk.c1[1] * rt;
-        b = b * (1 - rt) + rk.c1[2] * rt;
-      }
-
-      // Snow on high flat areas + painted snow
-      const snowMask = Math.max(0, h - snowLine) * (1 - slope * 0.8) * 4;
-      const totalSnow = Math.min(1, snowMask + snowPaint);
-      if (totalSnow > 0.01) {
-        const sn = PRESETS.snow;
-        r = r * (1 - totalSnow) + sn.c1[0] * totalSnow;
-        g = g * (1 - totalSnow) + sn.c1[1] * totalSnow;
-        b = b * (1 - totalSnow) + sn.c1[2] * totalSnow;
-      }
-
-      // Vegetation density painted pushes green
-      if (vegPaint > 0.05) {
-        const vt = Math.min(0.7, vegPaint);
-        r = r * (1 - vt * 0.5) + 60 * vt * 0.5;
-        g = g * (1 - vt * 0.3) + 110 * vt * 0.3;
-        b = b * (1 - vt * 0.5) + 30 * vt * 0.5;
-      }
-
-      return [
-        Math.max(0, Math.min(255, r)) / 255,
-        Math.max(0, Math.min(255, g)) / 255,
-        Math.max(0, Math.min(255, b)) / 255,
-      ];
-    }
+export class MaterialSystem {
+  constructor() {
+    this.current = 'alpine';
+    this.noise = new PerlinNoise(2024);
+    this.params = {
+      snowLine: 0.70,
+      moss: 0.40,
+      waterLevel: 0.18,
+      slopeBlend: 0.60,
+    };
   }
 
-  W.MaterialSystem = MaterialSystem;
-  W.MAT_PRESETS = PRESETS;
-})(window);
+  setPreset(name) { if (PRESETS[name]) this.current = name; }
+  setParam(key, val) { this.params[key] = val; }
+
+  getPreset() { return PRESETS[this.current]; }
+
+  // Compute color for a single vertex (returns [r,g,b] in 0..1)
+  sampleColor(terrain, u, v, height, slope) {
+    const p = PRESETS[this.current];
+    const { snowLine, moss, waterLevel, slopeBlend } = this.params;
+
+    const snowPaint = Math.max(0, terrain.samplePaint(terrain.snow, u, v));
+    const vegPaint = terrain.samplePaint(terrain.veg, u, v);
+
+    // Noise for color variation
+    const n = (this.noise.fbm(u * 16, v * 16, 3) + 1) * 0.5;
+
+    // Start with low color
+    let r = p.low[0], g = p.low[1], b = p.low[2];
+
+    // Blend to mid based on height
+    const midT = Math.min(1, Math.max(0, (height - 0.1) / 0.5));
+    r = r * (1 - midT) + p.mid[0] * midT;
+    g = g * (1 - midT) + p.mid[1] * midT;
+    b = b * (1 - midT) + p.mid[2] * midT;
+
+    // Slope pushes toward mid (rock)
+    if (slope > 0.3) {
+      const sT = Math.min(1, (slope - 0.3) * 2 * slopeBlend);
+      r = r * (1 - sT) + p.mid[0] * sT;
+      g = g * (1 - sT) + p.mid[1] * sT;
+      b = b * (1 - sT) + p.mid[2] * sT;
+    }
+
+    // Moss in low flat areas (for any preset — creates those green streaks)
+    if (moss > 0.01 && height < 0.5 && slope < 0.5) {
+      const mossT = moss * (1 - slope) * (1 - height * 1.5) * 0.8;
+      const mossR = 40, mossG = 100, mossB = 30;
+      r = r * (1 - mossT) + mossR * mossT;
+      g = g * (1 - mossT) + mossG * mossT;
+      b = b * (1 - mossT) + mossB * mossT;
+    }
+
+    // Snow on high areas + where not too steep
+    const snowMask = Math.max(0, height - snowLine) * (1 - slope * 0.7) * 3;
+    const totalSnow = Math.min(1, snowMask + snowPaint);
+    if (totalSnow > 0.01) {
+      r = r * (1 - totalSnow) + p.high[0] * totalSnow;
+      g = g * (1 - totalSnow) + p.high[1] * totalSnow;
+      b = b * (1 - totalSnow) + p.high[2] * totalSnow;
+    }
+
+    // Vegetation painted
+    if (vegPaint > 0.05) {
+      const vT = Math.min(0.7, vegPaint);
+      r = r * (1 - vT * 0.6) + 50 * vT * 0.6;
+      g = g * (1 - vT * 0.3) + 110 * vT * 0.3;
+      b = b * (1 - vT * 0.6) + 30 * vT * 0.6;
+    }
+
+    // Underwater — darken
+    if (height < waterLevel) {
+      const depth = (waterLevel - height) / waterLevel;
+      const darken = 1 - depth * 0.5;
+      r *= darken; g *= darken; b *= darken;
+    }
+
+    // Color variation
+    const varF = 0.85 + n * 0.3;
+    r *= varF; g *= varF; b *= varF;
+
+    return [
+      Math.max(0, Math.min(1, r / 255)),
+      Math.max(0, Math.min(1, g / 255)),
+      Math.max(0, Math.min(1, b / 255)),
+    ];
+  }
+}
+
+export { PRESETS };
