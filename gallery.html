@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WSF · Past Simulations</title>
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/portal.css">
+<link rel="stylesheet" href="css/gallery.css">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Orbitron:wght@700;900&family=Special+Elite&display=swap" rel="stylesheet">
+</head>
+<body class="gallery-body">
+
+<div class="grain"></div>
+<div class="scanlines"></div>
+
+<header class="portal-header">
+  <div class="portal-header-left">
+    <a href="index.html" class="back-link" title="Back to portal">◀</a>
+    <div class="logo-lump"></div>
+    <div>
+      <h1 class="portal-title">PAST SIMULATIONS</h1>
+      <div class="portal-tagline">ARCHIVE · SAVED WORLDS</div>
+    </div>
+  </div>
+  <div class="portal-header-right">
+    <button class="title-btn" id="importBtn">⬆ IMPORT JSON</button>
+    <input type="file" id="importInput" accept=".json" style="display:none">
+    <button class="title-btn danger" id="clearAllBtn">CLEAR ALL</button>
+  </div>
+</header>
+
+<main class="gallery-stage">
+  <div class="gallery-toolbar">
+    <span class="gtbar-section"><span class="gtbar-k">SCENES</span><span class="gtbar-v" id="countVal">0</span></span>
+    <span class="gtbar-section grow"></span>
+    <span class="gtbar-section">
+      <input type="text" id="searchInput" placeholder="search by name..." class="gallery-search">
+    </span>
+    <span class="gtbar-section">
+      <select id="sortSelect" class="gallery-sort">
+        <option value="updated">Recently Updated</option>
+        <option value="created">Recently Created</option>
+        <option value="name">Name A→Z</option>
+      </select>
+    </span>
+  </div>
+
+  <div class="gallery-grid" id="galleryGrid">
+    <!-- cards inserted here -->
+  </div>
+
+  <div class="gallery-empty hidden" id="galleryEmpty">
+    <div class="empty-glyph">◯</div>
+    <div class="empty-title">NO SIMULATIONS YET</div>
+    <div class="empty-sub">Create a scene in the Terrain Lab and hit SAVE to archive it here.</div>
+    <a href="editor.html" class="chunky-btn primary">⌖ ENTER LAB</a>
+  </div>
+</main>
+
+<footer class="portal-footer">
+  <span class="pfoot-section">SHISHIR PANDE · ORIGAMIULTRAX</span>
+  <span class="pfoot-section">v4.0 · ARCHIVE</span>
+  <span class="pfoot-section grow"><span class="pfoot-blink">◉</span> READING LOCAL DATABASE</span>
+</footer>
+
+<!-- Confirm clear modal -->
+<div class="modal-overlay hidden" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-title">CONFIRM CLEAR</div>
+    <div class="modal-body">
+      <div style="font-family:var(--font-lcd);font-size:15px;color:var(--metal-hi);letter-spacing:1px;line-height:1.4;">
+        This will permanently delete <span id="confirmCount" style="color:var(--acid-red);">0</span> saved simulations.<br><br>
+        This cannot be undone.
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="chunky-btn" id="confirmCancel">CANCEL</button>
+      <button class="chunky-btn danger" id="confirmYes">DELETE ALL</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/gallery.js"></script>
+</body>
+</html>

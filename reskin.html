@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WSF · Reskin Lab</title>
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/portal.css">
+<link rel="stylesheet" href="css/reskin.css">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Orbitron:wght@700;900&family=Special+Elite&display=swap" rel="stylesheet">
+</head>
+<body class="reskin-body">
+
+<div class="grain"></div>
+<div class="scanlines"></div>
+
+<header class="portal-header">
+  <div class="portal-header-left">
+    <a href="index.html" class="back-link" title="Back to portal">◀</a>
+    <div class="logo-lump"></div>
+    <div>
+      <h1 class="portal-title">RESKIN LAB</h1>
+      <div class="portal-tagline">IMAGE / VIDEO · 90s RENDER FILTER</div>
+    </div>
+  </div>
+  <div class="portal-header-right">
+    <div class="status-lamp"></div>
+    <span class="status-text" id="reskinStatus">DROP MEDIA</span>
+  </div>
+</header>
+
+<main class="reskin-stage">
+
+  <!-- LEFT: input drop / preview -->
+  <section class="reskin-source">
+    <div class="reskin-section-head">SOURCE</div>
+    <div class="reskin-drop" id="dropZone">
+      <div class="drop-inner">
+        <div class="drop-glyph">⬒</div>
+        <div class="drop-title">DROP IMAGE OR VIDEO</div>
+        <div class="drop-sub">or click to browse</div>
+        <div class="drop-formats">jpg · png · mp4 · webm · mov</div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*,video/*" style="display:none">
+    </div>
+    <div class="reskin-source-info" id="sourceInfo">
+      <span class="rsi-k">FILE</span><span class="rsi-v" id="rsiName">—</span>
+      <span class="rsi-k">SIZE</span><span class="rsi-v" id="rsiSize">—</span>
+      <span class="rsi-k">DIMS</span><span class="rsi-v" id="rsiDims">—</span>
+    </div>
+    <div class="reskin-buttons">
+      <button class="chunky-btn small" id="srcChangeBtn">↻ CHANGE</button>
+      <button class="chunky-btn small" id="srcClearBtn">✕ CLEAR</button>
+    </div>
+    <video id="srcVideo" class="reskin-source-preview" loop muted playsinline style="display:none;"></video>
+    <img id="srcImage" class="reskin-source-preview" style="display:none;">
+  </section>
+
+  <!-- CENTER: output canvas -->
+  <section class="reskin-output">
+    <div class="reskin-bezel">
+      <div class="reskin-corner tl"></div>
+      <div class="reskin-corner tr"></div>
+      <div class="reskin-corner bl"></div>
+      <div class="reskin-corner br"></div>
+      <canvas id="reskinCanvas"></canvas>
+      <div class="reskin-watermark">WSF · RESKIN · v4</div>
+      <div class="reskin-empty" id="reskinEmpty">
+        <div class="reskin-empty-glyph">◯</div>
+        <div class="reskin-empty-text">awaiting source</div>
+      </div>
+    </div>
+    <div class="reskin-output-controls">
+      <button class="vp-btn" id="playPauseBtn" disabled>▶</button>
+      <span class="vp-readout" id="vidTime">--:--</span>
+      <input type="range" class="dial vid-scrub" id="vidScrub" min="0" max="1000" value="0" disabled>
+      <div class="vp-spacer"></div>
+      <button class="vp-btn" id="exportPngBtn" disabled>⬇ PNG</button>
+      <button class="vp-btn" id="exportVidBtn" disabled>⬇ WEBM</button>
+    </div>
+  </section>
+
+  <!-- RIGHT: control rail -->
+  <aside class="reskin-controls">
+    <div class="prop-group">
+      <div class="prop-header"><span class="prop-title">RESKIN PRESETS</span><span class="prop-led"></span></div>
+      <div class="prop-subgroup">
+        <div class="preset-grid">
+          <button class="chunky-btn small active" data-rpreset="bryce">BRYCE 96</button>
+          <button class="chunky-btn small" data-rpreset="vhs">VHS</button>
+          <button class="chunky-btn small" data-rpreset="psx">PSX POLY</button>
+          <button class="chunky-btn small" data-rpreset="crt">CRT TV</button>
+          <button class="chunky-btn small" data-rpreset="sunset">SUNSET</button>
+          <button class="chunky-btn small" data-rpreset="alien">ALIEN</button>
+          <button class="chunky-btn small" data-rpreset="dream">DREAM</button>
+          <button class="chunky-btn small" data-rpreset="raw">RAW</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="prop-group">
+      <div class="prop-header"><span class="prop-title">FILTER PARAMS</span></div>
+      <div class="prop-subgroup">
+        <div class="sub-label">COLOR</div>
+        <div class="slider-row"><label>SAT</label><input type="range" id="rsSat" min="0" max="200" value="120"><span class="val" id="rsSatV">1.20</span></div>
+        <div class="slider-row"><label>CONT</label><input type="range" id="rsContrast" min="50" max="200" value="115"><span class="val" id="rsContrastV">1.15</span></div>
+        <div class="slider-row"><label>POST</label><input type="range" id="rsPosterize" min="2" max="32" value="16"><span class="val" id="rsPosterizeV">16</span></div>
+        <div class="slider-row"><label>HUE</label><input type="range" id="rsHue" min="-180" max="180" value="0"><span class="val" id="rsHueV">0°</span></div>
+        <div class="slider-row"><label>WARM</label><input type="range" id="rsWarmth" min="-100" max="100" value="20"><span class="val" id="rsWarmthV">0.20</span></div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">LENS</div>
+        <div class="slider-row"><label>CHRM</label><input type="range" id="rsChroma" min="0" max="100" value="25"><span class="val" id="rsChromaV">0.25</span></div>
+        <div class="slider-row"><label>VIGN</label><input type="range" id="rsVignette" min="0" max="100" value="50"><span class="val" id="rsVignetteV">0.50</span></div>
+        <div class="slider-row"><label>BLUR</label><input type="range" id="rsBlur" min="0" max="100" value="0"><span class="val" id="rsBlurV">0.00</span></div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">DIGITAL</div>
+        <div class="slider-row"><label>GRAN</label><input type="range" id="rsGrain" min="0" max="100" value="20"><span class="val" id="rsGrainV">0.20</span></div>
+        <div class="slider-row"><label>SCAN</label><input type="range" id="rsScan" min="0" max="100" value="0"><span class="val" id="rsScanV">0.00</span></div>
+        <div class="slider-row"><label>PIX</label><input type="range" id="rsPixel" min="1" max="16" value="1"><span class="val" id="rsPixelV">1</span></div>
+        <div class="slider-row"><label>BLED</label><input type="range" id="rsBleed" min="0" max="100" value="0"><span class="val" id="rsBleedV">0.00</span></div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">DITHER</div>
+        <div class="slider-row"><label>AMNT</label><input type="range" id="rsDither" min="0" max="100" value="15"><span class="val" id="rsDitherV">0.15</span></div>
+      </div>
+    </div>
+
+    <div class="prop-group">
+      <div class="prop-header"><span class="prop-title">EXPORT</span></div>
+      <div class="prop-subgroup">
+        <div class="sub-label">PNG STILL</div>
+        <button class="chunky-btn" id="dlPng" disabled>⬇ DOWNLOAD PNG</button>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">VIDEO REC</div>
+        <div style="font-size:10px;color:var(--metal-hi);padding:4px 0;letter-spacing:1px;line-height:1.4;">
+          Plays through the video while recording the filtered canvas.
+        </div>
+        <button class="chunky-btn" id="dlVid" disabled>⬇ RECORD WEBM</button>
+        <div id="recProgress" style="font-family:var(--font-lcd);font-size:13px;color:var(--acid-green);padding:4px 0;letter-spacing:1px;"></div>
+      </div>
+    </div>
+  </aside>
+
+</main>
+
+<footer class="portal-footer">
+  <span class="pfoot-section">SHISHIR PANDE · ORIGAMIULTRAX</span>
+  <span class="pfoot-section">v4.0 · RESKIN LAB</span>
+  <span class="pfoot-section grow"><span class="pfoot-blink">◉</span> SHADER PIPELINE READY</span>
+</footer>
+
+<script type="module" src="js/reskin.js"></script>
+</body>
+</html>

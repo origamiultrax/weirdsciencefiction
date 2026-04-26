@@ -290,6 +290,22 @@ export class SceneManager {
     return mesh;
   }
 
+  duplicateObject(orig) {
+    if (!orig) return null;
+    const geom = orig.geometry; // share geometry — cheap
+    const mat = orig.material.clone();
+    const mesh = new THREE.Mesh(geom, mat);
+    mesh.position.copy(orig.position);
+    mesh.rotation.copy(orig.rotation);
+    mesh.scale.copy(orig.scale);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    mesh.userData = { type: orig.userData.type, id: Date.now() + Math.random() };
+    this.scene.add(mesh);
+    this.objects.push(mesh);
+    return mesh;
+  }
+
   removeObject(id) {
     const idx = this.objects.findIndex(o => o.userData.id === id);
     if (idx >= 0) {
