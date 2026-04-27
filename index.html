@@ -2,162 +2,410 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Weird Science Fiction</title>
+<title>Weird Science Fiction — Terrain Lab v3</title>
 <link rel="stylesheet" href="css/main.css">
-<link rel="stylesheet" href="css/portal.css">
+<link rel="stylesheet" href="css/panels.css">
+<link rel="stylesheet" href="css/controls.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=VT323&family=Orbitron:wght@700;900&family=Special+Elite&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
 </head>
-<body class="portal-body">
+<body>
 
 <div class="grain"></div>
 <div class="scanlines"></div>
 
-<header class="portal-header">
-  <div class="portal-header-left">
+<header class="titlebar">
+  <div class="titlebar-left">
     <div class="logo-lump"></div>
-    <div>
-      <h1 class="portal-title">WEIRD SCIENCE FICTION</h1>
-      <div class="portal-tagline">TERRESTRIAL SIMULATION DIVISION · EST. MCMXCVI</div>
-    </div>
+    <h1 class="title-text">WEIRD SCIENCE FICTION <span class="title-sub">v3.0 · TERRAIN LAB</span></h1>
   </div>
-  <div class="portal-header-right">
+  <div class="titlebar-right">
     <div class="status-lamp"></div>
-    <span class="status-text">SYSTEM ONLINE</span>
+    <span class="status-text" id="statusText">READY</span>
   </div>
 </header>
 
-<main class="portal-stage">
+<main class="workspace">
 
-  <!-- LEFT: rotating moon + decorative readouts -->
-  <aside class="portal-moon-bay">
-    <div class="moon-frame">
-      <div class="moon-corner tl"></div>
-      <div class="moon-corner tr"></div>
-      <div class="moon-corner bl"></div>
-      <div class="moon-corner br"></div>
-      <img class="moon-img" src="https://upload.wikimedia.org/wikipedia/commons/1/1a/Moon_rotating_full_220px.gif" alt="rotating lunar specimen">
-      <div class="moon-label">SPECIMEN · LUNA · ROT 27.32d</div>
-    </div>
-    <div class="readout-stack">
-      <div class="readout-line"><span class="rk">LAT</span><span class="rv" id="rdLat">40.7128°N</span></div>
-      <div class="readout-line"><span class="rk">LON</span><span class="rv" id="rdLon">73.7126°W</span></div>
-      <div class="readout-line"><span class="rk">ELV</span><span class="rv">12.0m</span></div>
-      <div class="readout-line"><span class="rk">UTC</span><span class="rv" id="rdUtc">--:--:--</span></div>
-      <div class="readout-line"><span class="rk">SOL</span><span class="rv" id="rdSol">DAY 0</span></div>
-      <div class="readout-line"><span class="rk">PHASE</span><span class="rv">WAXING GIBBOUS</span></div>
-      <div class="readout-line"><span class="rk">SAVED</span><span class="rv" id="rdSaved">— SIMS</span></div>
-    </div>
-    <div class="ascii-decor">
-   ╔═════════════╗
-   ║ 0x4F · WSF  ║
-   ║ ░▒▓ ◯ ▓▒░  ║
-   ╚═════════════╝
-    </div>
+  <aside class="panel tool-rail">
+    <div class="rail-header">TOOLS</div>
+    <button class="tool-btn" data-tool="scene"><span class="tool-icon">★</span><span class="tool-label">SCENE</span></button>
+    <button class="tool-btn" data-tool="world"><span class="tool-icon">⬣</span><span class="tool-label">WORLD</span></button>
+    <button class="tool-btn active" data-tool="terrain"><span class="tool-icon">▲</span><span class="tool-label">TERRAIN</span></button>
+    <button class="tool-btn" data-tool="sky"><span class="tool-icon">☀</span><span class="tool-label">SKY</span></button>
+    <button class="tool-btn" data-tool="objects"><span class="tool-icon">⬢</span><span class="tool-label">OBJECTS</span></button>
+    <button class="tool-btn" data-tool="materials"><span class="tool-icon">◈</span><span class="tool-label">MATERIAL</span></button>
+    <button class="tool-btn" data-tool="paint"><span class="tool-icon">✦</span><span class="tool-label">PAINT</span></button>
+    <button class="tool-btn" data-tool="camera"><span class="tool-icon">◉</span><span class="tool-label">CAMERA</span></button>
+    <button class="tool-btn" data-tool="video"><span class="tool-icon">▶</span><span class="tool-label">EXPORT</span></button>
+    <div class="rail-spacer"></div>
+    <div class="rail-header">VIEW</div>
+    <button class="tool-btn small" data-view="persp">PERSP</button>
+    <button class="tool-btn small" data-view="top">TOP</button>
+    <button class="tool-btn small" data-view="front">FRONT</button>
+    <button class="tool-btn small" data-view="side">SIDE</button>
   </aside>
 
-  <!-- CENTER: three leaf doors -->
-  <section class="portal-doors">
-    <div class="doors-heading">SELECT INVOCATION</div>
-
-    <a href="editor.html" class="leaf-door" data-door="new">
-      <svg class="leaf-svg" viewBox="0 0 240 320" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="leaf1Grad" cx="50%" cy="50%" r="60%">
-            <stop offset="0%" stop-color="#1a2818"/>
-            <stop offset="60%" stop-color="#0c1408"/>
-            <stop offset="100%" stop-color="#000"/>
-          </radialGradient>
-          <linearGradient id="leaf1Vein" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#7dff42" stop-opacity="0.9"/>
-            <stop offset="100%" stop-color="#7dff42" stop-opacity="0.2"/>
-          </linearGradient>
-        </defs>
-        <path class="leaf-body" d="M120 10 C 60 30, 20 90, 20 160 C 20 230, 60 290, 120 310 C 180 290, 220 230, 220 160 C 220 90, 180 30, 120 10 Z" fill="url(#leaf1Grad)" stroke="#7dff42" stroke-width="1.5"/>
-        <path class="leaf-vein-main" d="M120 18 L 120 305" stroke="url(#leaf1Vein)" stroke-width="2" fill="none"/>
-        <path class="leaf-vein" d="M120 50 L 60 90 M120 50 L 180 90" stroke="#7dff42" stroke-width="0.8" stroke-opacity="0.6" fill="none"/>
-        <path class="leaf-vein" d="M120 100 L 45 140 M120 100 L 195 140" stroke="#7dff42" stroke-width="0.8" stroke-opacity="0.6" fill="none"/>
-        <path class="leaf-vein" d="M120 160 L 35 195 M120 160 L 205 195" stroke="#7dff42" stroke-width="0.8" stroke-opacity="0.5" fill="none"/>
-        <path class="leaf-vein" d="M120 220 L 50 245 M120 220 L 190 245" stroke="#7dff42" stroke-width="0.8" stroke-opacity="0.4" fill="none"/>
-        <circle cx="120" cy="160" r="14" fill="#000" stroke="#7dff42" stroke-width="1"/>
-        <text x="120" y="166" class="leaf-glyph" text-anchor="middle">▲</text>
-      </svg>
-      <div class="leaf-label">
-        <div class="leaf-num">I.</div>
-        <div class="leaf-title">CREATE NEW</div>
-        <div class="leaf-sub">Begin a fresh simulation</div>
+  <section class="viewport-frame">
+    <div class="viewport-bezel">
+      <div class="viewport-corner tl"></div>
+      <div class="viewport-corner tr"></div>
+      <div class="viewport-corner bl"></div>
+      <div class="viewport-corner br"></div>
+      <div class="viewport-screen" id="viewportScreen">
+        <canvas id="mainCanvas"></canvas>
+        <div class="viewport-hud">
+          <span id="hudCoords">X:0.00 Y:0.00 Z:0.00</span>
+          <span id="hudFps">-- fps</span>
+        </div>
+        <div class="viewport-crosshair"></div>
+        <div class="viewport-watermark">WSF · v3 · DRAFT</div>
+        <div class="rec-indicator hidden" id="recIndicator">
+          <span class="rec-dot"></span> REC <span id="recTime">0.0s</span>
+        </div>
       </div>
-    </a>
-
-    <a href="gallery.html" class="leaf-door" data-door="past">
-      <svg class="leaf-svg" viewBox="0 0 240 320" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="leaf2Grad" cx="50%" cy="50%" r="60%">
-            <stop offset="0%" stop-color="#281a18"/>
-            <stop offset="60%" stop-color="#140c08"/>
-            <stop offset="100%" stop-color="#000"/>
-          </radialGradient>
-          <linearGradient id="leaf2Vein" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#ffb020" stop-opacity="0.9"/>
-            <stop offset="100%" stop-color="#ffb020" stop-opacity="0.2"/>
-          </linearGradient>
-        </defs>
-        <path class="leaf-body" d="M120 10 C 50 40, 25 100, 30 170 C 35 240, 70 295, 120 310 C 170 295, 205 240, 210 170 C 215 100, 190 40, 120 10 Z" fill="url(#leaf2Grad)" stroke="#ffb020" stroke-width="1.5"/>
-        <path class="leaf-vein-main" d="M120 18 L 120 305" stroke="url(#leaf2Vein)" stroke-width="2" fill="none"/>
-        <path class="leaf-vein" d="M120 60 L 70 100 M120 60 L 170 100" stroke="#ffb020" stroke-width="0.8" stroke-opacity="0.6" fill="none"/>
-        <path class="leaf-vein" d="M120 120 L 45 155 M120 120 L 195 155" stroke="#ffb020" stroke-width="0.8" stroke-opacity="0.6" fill="none"/>
-        <path class="leaf-vein" d="M120 180 L 40 210 M120 180 L 200 210" stroke="#ffb020" stroke-width="0.8" stroke-opacity="0.5" fill="none"/>
-        <path class="leaf-vein" d="M120 240 L 60 260 M120 240 L 180 260" stroke="#ffb020" stroke-width="0.8" stroke-opacity="0.4" fill="none"/>
-        <circle cx="120" cy="160" r="14" fill="#000" stroke="#ffb020" stroke-width="1"/>
-        <text x="120" y="167" class="leaf-glyph" text-anchor="middle" style="fill:#ffb020;">⊞</text>
-      </svg>
-      <div class="leaf-label">
-        <div class="leaf-num">II.</div>
-        <div class="leaf-title">PAST SIMULATIONS</div>
-        <div class="leaf-sub" id="leafPastSub">Browse saved worlds</div>
-      </div>
-    </a>
-
-    <a href="reskin.html" class="leaf-door" data-door="reskin">
-      <svg class="leaf-svg" viewBox="0 0 240 320" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="leaf3Grad" cx="50%" cy="50%" r="60%">
-            <stop offset="0%" stop-color="#281828"/>
-            <stop offset="60%" stop-color="#140814"/>
-            <stop offset="100%" stop-color="#000"/>
-          </radialGradient>
-          <linearGradient id="leaf3Vein" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#ff2a3a" stop-opacity="0.9"/>
-            <stop offset="100%" stop-color="#ff2a3a" stop-opacity="0.2"/>
-          </linearGradient>
-        </defs>
-        <path class="leaf-body" d="M120 10 C 70 20, 30 80, 25 160 C 30 245, 75 295, 120 310 C 165 295, 210 245, 215 160 C 210 80, 170 20, 120 10 Z" fill="url(#leaf3Grad)" stroke="#ff2a3a" stroke-width="1.5"/>
-        <path class="leaf-vein-main" d="M120 18 L 120 305" stroke="url(#leaf3Vein)" stroke-width="2" fill="none"/>
-        <path class="leaf-vein" d="M120 70 L 65 105 M120 70 L 175 105" stroke="#ff2a3a" stroke-width="0.8" stroke-opacity="0.6" fill="none"/>
-        <path class="leaf-vein" d="M120 130 L 45 160 M120 130 L 195 160" stroke="#ff2a3a" stroke-width="0.8" stroke-opacity="0.6" fill="none"/>
-        <path class="leaf-vein" d="M120 190 L 40 215 M120 190 L 200 215" stroke="#ff2a3a" stroke-width="0.8" stroke-opacity="0.5" fill="none"/>
-        <path class="leaf-vein" d="M120 245 L 65 265 M120 245 L 175 265" stroke="#ff2a3a" stroke-width="0.8" stroke-opacity="0.4" fill="none"/>
-        <circle cx="120" cy="160" r="14" fill="#000" stroke="#ff2a3a" stroke-width="1"/>
-        <text x="120" y="166" class="leaf-glyph" text-anchor="middle" style="fill:#ff2a3a;">⌬</text>
-      </svg>
-      <div class="leaf-label">
-        <div class="leaf-num">III.</div>
-        <div class="leaf-title">IMAGE / VIDEO RESKIN</div>
-        <div class="leaf-sub">Filter media in 90s render style</div>
-      </div>
-    </a>
-
+    </div>
+    <div class="viewport-controls">
+      <button class="vp-btn" id="wireBtn">WIRE</button>
+      <button class="vp-btn" id="resetCamBtn">RESET</button>
+      <div class="vp-spacer"></div>
+      <label class="vp-label">EXPOSURE</label>
+      <input type="range" class="dial" id="exposure" min="20" max="200" value="100">
+      <span class="vp-readout" id="exposureVal">1.00</span>
+      <div class="vp-spacer"></div>
+      <button class="vp-btn" id="snapBtn">📷 PNG</button>
+      <button class="vp-btn" id="recordBtn">● REC</button>
+      <button class="vp-btn big" id="turntableBtn">◉ TURNTABLE</button>
+    </div>
   </section>
+
+  <aside class="panel props-panel">
+
+    <!-- SCENE / PRESETS -->
+    <div class="prop-group hidden" data-panel="scene">
+      <div class="prop-header"><span class="prop-title">SCENE PRESETS</span><span class="prop-led"></span></div>
+      <div class="prop-subgroup">
+        <div class="sub-label">LOAD PRESET</div>
+        <div class="preset-grid">
+          <button class="chunky-btn small" data-preset="bryceClassic">BRYCE CLASSIC</button>
+          <button class="chunky-btn small" data-preset="bryceAlienPlanet">ALIEN PLANET</button>
+          <button class="chunky-btn small" data-preset="vaporwavePlaza">VAPORWAVE</button>
+          <button class="chunky-btn small" data-preset="chromeSunset">CHROME SUNSET</button>
+          <button class="chunky-btn small" data-preset="midnightVoid">MIDNIGHT VOID</button>
+          <button class="chunky-btn small" data-preset="mossyRidge">MOSSY RIDGE</button>
+        </div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">SAVE / LOAD</div>
+        <div class="button-row">
+          <button class="chunky-btn" id="sceneSaveBtn">SAVE .JSON</button>
+          <button class="chunky-btn" id="sceneLoadBtn">LOAD .JSON</button>
+        </div>
+        <input type="file" id="sceneFileInput" accept=".json" style="display:none">
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">CLEAR</div>
+        <div class="button-row">
+          <button class="chunky-btn small" id="sceneClearBtn">CLEAR ALL</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORLD MODE -->
+    <div class="prop-group hidden" data-panel="world">
+      <div class="prop-header"><span class="prop-title">WORLD MODE</span><span class="prop-led"></span></div>
+      <div class="prop-subgroup">
+        <div class="sub-label">GROUND TYPE</div>
+        <div class="world-grid">
+          <button class="world-btn active" data-world="terrain">▲<br>TERRAIN</button>
+          <button class="world-btn" data-world="checkered">▦<br>CHECKER</button>
+          <button class="world-btn" data-world="mirror">◈<br>MIRROR</button>
+          <button class="world-btn" data-world="void">○<br>VOID</button>
+        </div>
+      </div>
+      <div class="prop-subgroup" id="checkerControls" style="display:none;">
+        <div class="sub-label">CHECKER FLOOR</div>
+        <div class="slider-row"><label>TILE</label><input type="range" id="checkTile" min="20" max="500" value="100"><span class="val" id="checkTileV">1.00</span></div>
+        <div class="slider-row"><label>GLOSS</label><input type="range" id="checkGloss" min="0" max="100" value="30"><span class="val" id="checkGlossV">0.30</span></div>
+        <div class="color-row"><label>COL.A</label><input type="color" id="checkColorA" value="#ffffff"></div>
+        <div class="color-row"><label>COL.B</label><input type="color" id="checkColorB" value="#0a0a18"></div>
+      </div>
+      <div class="prop-subgroup" id="mirrorControls" style="display:none;">
+        <div class="sub-label">MIRROR PLANE</div>
+        <div class="slider-row"><label>REFL</label><input type="range" id="mirrorRefl" min="0" max="200" value="100"><span class="val" id="mirrorReflV">1.00</span></div>
+        <div class="color-row"><label>TINT</label><input type="color" id="mirrorTint" value="#0a4870"></div>
+      </div>
+    </div>
+
+    <!-- TERRAIN -->
+    <div class="prop-group" data-panel="terrain">
+      <div class="prop-header"><span class="prop-title">TERRAIN GENERATOR</span><span class="prop-led"></span></div>
+      <div class="prop-subgroup">
+        <div class="sub-label">FRACTAL NOISE</div>
+        <div class="slider-row"><label>FREQ</label><input type="range" id="terrFreq" min="1" max="200" value="50"><span class="val" id="terrFreqV">0.50</span></div>
+        <div class="slider-row"><label>AMPL</label><input type="range" id="terrAmp" min="10" max="300" value="160"><span class="val" id="terrAmpV">1.60</span></div>
+        <div class="slider-row"><label>OCTV</label><input type="range" id="terrOct" min="1" max="8" value="6"><span class="val" id="terrOctV">6</span></div>
+        <div class="slider-row"><label>SEED</label><input type="range" id="terrSeed" min="0" max="9999" value="1337"><span class="val" id="terrSeedV">1337</span></div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">MODIFIERS</div>
+        <div class="slider-row"><label>RIDG</label><input type="range" id="terrRidge" min="0" max="100" value="60"><span class="val" id="terrRidgeV">0.60</span></div>
+        <div class="slider-row"><label>PEAK</label><input type="range" id="terrPeak" min="0" max="100" value="50"><span class="val" id="terrPeakV">0.50</span></div>
+        <div class="slider-row"><label>EROS</label><input type="range" id="terrErode" min="0" max="100" value="20"><span class="val" id="terrErodeV">0.20</span></div>
+        <div class="slider-row"><label>PLAT</label><input type="range" id="terrPlateau" min="0" max="100" value="0"><span class="val" id="terrPlateauV">0.00</span></div>
+        <div class="slider-row"><label>SMTH</label><input type="range" id="terrSmooth" min="0" max="100" value="5"><span class="val" id="terrSmoothV">0.05</span></div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">RESOLUTION</div>
+        <div class="slider-row"><label>RES</label><input type="range" id="terrRes" min="64" max="256" step="32" value="192"><span class="val" id="terrResV">192</span></div>
+      </div>
+      <div class="button-row">
+        <button class="chunky-btn" id="terrNewBtn">NEW</button>
+        <button class="chunky-btn" id="terrRandBtn">RAND</button>
+      </div>
+    </div>
+
+    <!-- SKY -->
+    <div class="prop-group hidden" data-panel="sky">
+      <div class="prop-header"><span class="prop-title">SKY & ATMOSPHERE</span><span class="prop-led"></span></div>
+      <div class="prop-subgroup">
+        <div class="sub-label">MODE</div>
+        <div class="button-row">
+          <button class="chunky-btn small active" data-skymode="atmosphere">ATMOS</button>
+          <button class="chunky-btn small" data-skymode="gradient">GRAD</button>
+        </div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">SUN</div>
+        <div class="slider-row"><label>ELEV</label><input type="range" id="skyElev" min="-10" max="90" value="30"><span class="val" id="skyElevV">30°</span></div>
+        <div class="slider-row"><label>AZIM</label><input type="range" id="skyAzim" min="0" max="360" value="140"><span class="val" id="skyAzimV">140°</span></div>
+      </div>
+      <div class="prop-subgroup" id="atmosControls">
+        <div class="sub-label">ATMOSPHERE</div>
+        <div class="slider-row"><label>TURB</label><input type="range" id="skyTurb" min="0" max="200" value="30"><span class="val" id="skyTurbV">3.0</span></div>
+        <div class="slider-row"><label>RAYL</label><input type="range" id="skyRayl" min="0" max="400" value="150"><span class="val" id="skyRaylV">1.5</span></div>
+        <div class="slider-row"><label>MIEC</label><input type="range" id="skyMie" min="0" max="100" value="10"><span class="val" id="skyMieV">0.010</span></div>
+      </div>
+      <div class="prop-subgroup" id="gradControls" style="display:none;">
+        <div class="sub-label">GRADIENT BANDS</div>
+        <div class="color-row"><label>TOP</label><input type="color" id="gradTop" value="#1a1040"></div>
+        <div class="color-row"><label>MID</label><input type="color" id="gradMid" value="#ff4080"></div>
+        <div class="color-row"><label>HOR</label><input type="color" id="gradHor" value="#ffd060"></div>
+        <div class="slider-row"><label>STOP</label><input type="range" id="gradStops" min="20" max="80" value="45"><span class="val" id="gradStopsV">0.45</span></div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">CLOUDS</div>
+        <div class="slider-row"><label>DENS</label><input type="range" id="cloudDens" min="0" max="100" value="40"><span class="val" id="cloudDensV">0.40</span></div>
+        <div class="slider-row"><label>SPED</label><input type="range" id="cloudSpd" min="0" max="100" value="40"><span class="val" id="cloudSpdV">0.04</span></div>
+        <div class="slider-row"><label>HGHT</label><input type="range" id="cloudHgt" min="20" max="90" value="55"><span class="val" id="cloudHgtV">0.55</span></div>
+        <div class="color-row"><label>COLR</label><input type="color" id="cloudCol" value="#ffffff"></div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">PLANETS</div>
+        <label class="check-row"><input type="checkbox" id="planet1En"><span>PLANET 1</span></label>
+        <div class="slider-row"><label>SIZE</label><input type="range" id="planet1Sz" min="2" max="100" value="18"><span class="val" id="planet1SzV">0.18</span></div>
+        <div class="slider-row"><label>POS X</label><input type="range" id="planet1Px" min="-100" max="100" value="-40"><span class="val" id="planet1PxV">-0.40</span></div>
+        <div class="slider-row"><label>POS Y</label><input type="range" id="planet1Py" min="0" max="100" value="50"><span class="val" id="planet1PyV">0.50</span></div>
+        <div class="color-row"><label>COLR</label><input type="color" id="planet1Col" value="#ff8060"></div>
+        <label class="check-row"><input type="checkbox" id="planet2En"><span>PLANET 2 (moon)</span></label>
+        <div class="slider-row"><label>SIZE</label><input type="range" id="planet2Sz" min="1" max="50" value="6"><span class="val" id="planet2SzV">0.06</span></div>
+        <div class="slider-row"><label>POS X</label><input type="range" id="planet2Px" min="-100" max="100" value="30"><span class="val" id="planet2PxV">0.30</span></div>
+        <div class="slider-row"><label>POS Y</label><input type="range" id="planet2Py" min="0" max="100" value="70"><span class="val" id="planet2PyV">0.70</span></div>
+        <div class="color-row"><label>COLR</label><input type="color" id="planet2Col" value="#c0c0d0"></div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">STARS / FOG</div>
+        <div class="slider-row"><label>STAR</label><input type="range" id="skyStars" min="0" max="100" value="0"><span class="val" id="skyStarsV">0.00</span></div>
+        <div class="slider-row"><label>FOG</label><input type="range" id="skyFog" min="0" max="100" value="15"><span class="val" id="skyFogV">0.15</span></div>
+        <div class="color-row"><label>FOG.C</label><input type="color" id="skyFogColor" value="#c8b8a0"></div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">PRESETS</div>
+        <div class="button-row">
+          <button class="chunky-btn small" data-skypreset="noon">NOON</button>
+          <button class="chunky-btn small" data-skypreset="sunset">SUNSET</button>
+          <button class="chunky-btn small" data-skypreset="dusk">DUSK</button>
+          <button class="chunky-btn small" data-skypreset="alien">ALIEN</button>
+        </div>
+        <div class="button-row">
+          <button class="chunky-btn small" data-skypreset="vapor">VAPOR</button>
+          <button class="chunky-btn small" data-skypreset="midnight">MIDNIGHT</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBJECTS -->
+    <div class="prop-group hidden" data-panel="objects">
+      <div class="prop-header"><span class="prop-title">OBJECT SYSTEM</span><span class="prop-led"></span></div>
+      <div class="prop-subgroup">
+        <div class="sub-label">PRIMITIVES</div>
+        <div class="prim-grid">
+          <button class="prim-btn" data-prim="sphere">◉<br>SPHR</button>
+          <button class="prim-btn" data-prim="cube">◼<br>CUBE</button>
+          <button class="prim-btn" data-prim="cone">▲<br>CONE</button>
+          <button class="prim-btn" data-prim="cyl">◎<br>CYL</button>
+          <button class="prim-btn" data-prim="torus">◯<br>TORS</button>
+          <button class="prim-btn" data-prim="chrome">✦<br>CHRM</button>
+          <button class="prim-btn" data-prim="pyramid">▲<br>PYRA</button>
+          <button class="prim-btn" data-prim="arch">⌒<br>ARCH</button>
+          <button class="prim-btn" data-prim="monolith">▮<br>MONO</button>
+        </div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">FLOATING CHROME</div>
+        <div class="slider-row"><label>CNT</label><input type="range" id="cubeCount" min="0" max="40" value="0"><span class="val" id="cubeCountV">0</span></div>
+        <div class="slider-row"><label>HGT</label><input type="range" id="cubeHgt" min="0" max="100" value="50"><span class="val" id="cubeHgtV">0.50</span></div>
+        <button class="chunky-btn" id="cubeSpawnBtn">SPAWN CHROME</button>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">SCATTER TREES</div>
+        <div class="slider-row"><label>DENS</label><input type="range" id="scatterDens" min="0" max="500" value="150"><span class="val" id="scatterDensV">150</span></div>
+        <div class="slider-row"><label>SLPE</label><input type="range" id="scatterSlope" min="0" max="100" value="50"><span class="val" id="scatterSlopeV">0.50</span></div>
+        <div class="slider-row"><label>HMIN</label><input type="range" id="scatterHmin" min="0" max="100" value="10"><span class="val" id="scatterHminV">0.10</span></div>
+        <div class="slider-row"><label>HMAX</label><input type="range" id="scatterHmax" min="0" max="100" value="65"><span class="val" id="scatterHmaxV">0.65</span></div>
+        <button class="chunky-btn" id="scatterBtn">SCATTER</button>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">SCENE LIST</div>
+        <div class="scene-list" id="sceneList"></div>
+        <button class="chunky-btn small" id="clearObjBtn">CLEAR ALL</button>
+      </div>
+    </div>
+
+    <!-- MATERIALS -->
+    <div class="prop-group hidden" data-panel="materials">
+      <div class="prop-header"><span class="prop-title">MATERIAL PRESETS</span><span class="prop-led"></span></div>
+      <div class="prop-subgroup">
+        <div class="sub-label">TERRAIN STYLE</div>
+        <div class="mat-grid">
+          <button class="mat-swatch active" data-mat="alpine" style="--c1:#6b6358;--c2:#ecf2f7">ALPINE</button>
+          <button class="mat-swatch" data-mat="mossy" style="--c1:#4a6b2a;--c2:#2a4015">MOSSY</button>
+          <button class="mat-swatch" data-mat="desert" style="--c1:#c9a875;--c2:#8a6d40">DESERT</button>
+          <button class="mat-swatch" data-mat="volcanic" style="--c1:#3a1510;--c2:#ff4020">VOLCAN</button>
+          <button class="mat-swatch" data-mat="alien" style="--c1:#6a2a8a;--c2:#20ffa0">ALIEN</button>
+          <button class="mat-swatch" data-mat="arctic" style="--c1:#a8c8e8;--c2:#ffffff">ARCTIC</button>
+        </div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">BLEND</div>
+        <div class="slider-row"><label>SNOW</label><input type="range" id="matSnowLine" min="0" max="100" value="70"><span class="val" id="matSnowLineV">0.70</span></div>
+        <div class="slider-row"><label>MOSS</label><input type="range" id="matMoss" min="0" max="100" value="40"><span class="val" id="matMossV">0.40</span></div>
+        <div class="slider-row"><label>WATR</label><input type="range" id="matWaterLvl" min="0" max="80" value="18"><span class="val" id="matWaterLvlV">0.18</span></div>
+        <div class="slider-row"><label>SLPE</label><input type="range" id="matSlope" min="0" max="100" value="60"><span class="val" id="matSlopeV">0.60</span></div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">WATER</div>
+        <label class="check-row"><input type="checkbox" id="waterEnabled" checked><span>ENABLE WATER</span></label>
+        <div class="color-row"><label>TINT</label><input type="color" id="waterColor" value="#0a4870"></div>
+        <div class="slider-row"><label>OPAC</label><input type="range" id="waterOpac" min="0" max="100" value="85"><span class="val" id="waterOpacV">0.85</span></div>
+      </div>
+    </div>
+
+    <!-- PAINT -->
+    <div class="prop-group hidden" data-panel="paint">
+      <div class="prop-header"><span class="prop-title">TERRAIN PAINT</span><span class="prop-led"></span></div>
+      <div class="prop-subgroup">
+        <div class="sub-label">MODE</div>
+        <div class="paint-grid">
+          <button class="paint-btn active" data-paint="height-up">⬆ RAISE</button>
+          <button class="paint-btn" data-paint="height-dn">⬇ LOWER</button>
+          <button class="paint-btn" data-paint="smooth">≈ SMOOTH</button>
+          <button class="paint-btn" data-paint="erode">⌇ ERODE</button>
+          <button class="paint-btn" data-paint="snow">❄ SNOW</button>
+          <button class="paint-btn" data-paint="veg">♣ VEG</button>
+        </div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">BRUSH</div>
+        <div class="slider-row"><label>SIZE</label><input type="range" id="brushSize" min="2" max="40" value="10"><span class="val" id="brushSizeV">10</span></div>
+        <div class="slider-row"><label>STRN</label><input type="range" id="brushStr" min="1" max="100" value="30"><span class="val" id="brushStrV">0.30</span></div>
+        <div class="slider-row"><label>FALL</label><input type="range" id="brushFall" min="0" max="100" value="50"><span class="val" id="brushFallV">0.50</span></div>
+      </div>
+      <div class="button-row">
+        <button class="chunky-btn" id="paintClearBtn">CLR PAINT</button>
+      </div>
+    </div>
+
+    <!-- CAMERA -->
+    <div class="prop-group hidden" data-panel="camera">
+      <div class="prop-header"><span class="prop-title">CAMERA / RENDER</span><span class="prop-led"></span></div>
+      <div class="prop-subgroup">
+        <div class="sub-label">PRESETS</div>
+        <div class="button-row">
+          <button class="chunky-btn small" data-cam="wide">WIDE</button>
+          <button class="chunky-btn small" data-cam="tele">TELE</button>
+          <button class="chunky-btn small" data-cam="aerial">AERL</button>
+        </div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">LENS</div>
+        <div class="slider-row"><label>FOV</label><input type="range" id="camFov" min="20" max="120" value="55"><span class="val" id="camFovV">55°</span></div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">POST</div>
+        <label class="check-row"><input type="checkbox" id="postBloom" checked><span>BLOOM</span></label>
+        <label class="check-row"><input type="checkbox" id="postVignette" checked><span>VIGNETTE</span></label>
+        <div class="slider-row"><label>BLUM</label><input type="range" id="bloomStr" min="0" max="200" value="50"><span class="val" id="bloomStrV">0.50</span></div>
+      </div>
+    </div>
+
+    <!-- VIDEO / EXPORT -->
+    <div class="prop-group hidden" data-panel="video">
+      <div class="prop-header"><span class="prop-title">EXPORT</span><span class="prop-led"></span></div>
+      <div class="prop-subgroup">
+        <div class="sub-label">PNG STILL</div>
+        <button class="chunky-btn" id="pngBtn">📷 SAVE PNG</button>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">PNG SEQUENCE</div>
+        <div class="slider-row"><label>DUR</label><input type="range" id="seqDur" min="2" max="20" value="6"><span class="val" id="seqDurV">6s</span></div>
+        <div class="slider-row"><label>FPS</label><input type="range" id="seqFps" min="12" max="60" step="6" value="24"><span class="val" id="seqFpsV">24</span></div>
+        <button class="chunky-btn" id="seqBtn">⟳ EXPORT SEQUENCE</button>
+        <div style="font-size:10px;color:var(--metal-hi);padding:4px 0;letter-spacing:1px;">
+          Browser may prompt to allow multiple downloads.
+        </div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">VIDEO TURNTABLE</div>
+        <div class="slider-row"><label>DUR</label><input type="range" id="vidDur" min="3" max="30" value="10"><span class="val" id="vidDurV">10s</span></div>
+        <div class="slider-row"><label>FPS</label><input type="range" id="vidFps" min="15" max="60" step="15" value="30"><span class="val" id="vidFpsV">30</span></div>
+        <div class="slider-row"><label>TILT</label><input type="range" id="vidTilt" min="0" max="60" value="15"><span class="val" id="vidTiltV">15°</span></div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">FREE RECORD</div>
+        <div style="font-size:11px;color:var(--metal-hi);padding:4px 0;letter-spacing:1px;">
+          Hit REC, move camera, hit STOP.
+        </div>
+      </div>
+      <div class="prop-subgroup">
+        <div class="sub-label">INFO</div>
+        <div id="vidInfo" style="font-family:var(--font-lcd);font-size:12px;color:var(--acid-green);padding:4px 0;letter-spacing:1px;">
+          ready · webm + png
+        </div>
+      </div>
+    </div>
+
+  </aside>
 </main>
 
-<footer class="portal-footer">
-  <span class="pfoot-section">SHISHIR PANDE · ORIGAMIULTRAX</span>
-  <span class="pfoot-section">v4.0 · ALPHA</span>
-  <span class="pfoot-section grow"><span class="pfoot-blink">◉</span> CHANNEL OPEN · TRANSMISSION READY</span>
-  <span class="pfoot-section">© THE ANTHROPOCENE</span>
+<footer class="moodbar">
+  <div class="mood-section"><span class="mood-label">SCENE</span><span class="mood-val" id="moodScene">wsf_v3</span></div>
+  <div class="mood-section"><span class="mood-label">TRIS</span><span class="mood-val" id="moodVerts">0</span></div>
+  <div class="mood-section"><span class="mood-label">OBJ</span><span class="mood-val" id="moodObj">0</span></div>
+  <div class="mood-section"><span class="mood-label">MEM</span><div class="memory-bar"><div class="memory-fill" id="memFill"></div></div></div>
+  <div class="mood-section grow"><span class="mood-label">LOG</span><span class="mood-val" id="moodLog">boot · welcome to WSF v3</span></div>
+  <div class="mood-section"><span class="mood-blink"></span><span class="mood-val">LIVE</span></div>
 </footer>
 
-<script type="module" src="js/portal.js"></script>
+<script type="module" src="js/app.js"></script>
 </body>
 </html>
