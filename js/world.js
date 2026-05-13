@@ -1,5 +1,6 @@
-// world.js — World ground modes: terrain, checkered, mirror, void
+// world.js — World ground modes: terrain, checkered, mirror, void, mall
 import * as THREE from 'three';
+import { Mall, MALL_PRESETS } from './mall.js';
 
 export class WorldManager {
   constructor(scene, terrain, materials, worldSize, worldHeight) {
@@ -15,6 +16,7 @@ export class WorldManager {
     this.terrainMat = null;
     this.checkerMesh = null;
     this.mirrorMesh = null;
+    this.mall = null;
     this.cubeRenderTarget = null; // for chrome reflections
     this.cubeCamera = null;
 
@@ -28,6 +30,7 @@ export class WorldManager {
       tint: 0x0a4870,
       reflectivity: 1.0,
     };
+    this.mallParams = { preset: 'deadMall' };
 
     this._buildTerrain();
     // Reflection probe for chrome objects (always present)
@@ -140,6 +143,10 @@ export class WorldManager {
       this.mirrorMesh.material.dispose();
       this.mirrorMesh = null;
     }
+    if (this.mall) {
+      this.mall.dispose();
+      this.mall = null;
+    }
   }
 
   _buildCurrent() {
@@ -152,6 +159,9 @@ export class WorldManager {
         break;
       case 'mirror':
         this._buildMirror();
+        break;
+      case 'mall':
+        this._buildMall();
         break;
       case 'void':
         // Nothing — pure empty void
@@ -219,6 +229,17 @@ export class WorldManager {
     this.scene.add(this.mirrorMesh);
   }
 
+  _buildMall() {
+    this.mall = new Mall(this.scene, this.worldSize, this.worldHeight);
+    if (this.mallParams.preset && MALL_PRESETS[this.mallParams.preset]) {
+      Object.assign(this.mall.params, MALL_PRESETS[this.mallParams.preset]);
+      this.mall.params.preset = this.mallParams.preset;
+      this.mall.rebuild();
+    } else {
+      this.mall.attach();
+    }
+  }
+
   setCheckerParam(key, val) {
     this.checkerParams[key] = val;
     if (this.mode === 'checkered') {
@@ -235,10 +256,31 @@ export class WorldManager {
     }
   }
 
+  setMallPreset(name) {
+    this.mallParams.preset = name;
+    if (this.mode === 'mall' && this.mall) {
+      this.mall.setPreset(name);
+    }
+  }
+
+  setMallParam(key, val) {
+    if (this.mode === 'mall' && this.mall) {
+      this.mall.setParam(key, val);
+    }
+  }
+
+  // Per-frame update for mall flicker effects
+  update(dt) {
+    if (this.mall && this.mode === 'mall') this.mall.update(dt);
+  }
+
   // Sample world height at a UV coord — for placing objects on the world
   sampleHeight(u, v) {
     if (this.mode === 'terrain') {
       return this.terrain.sample(u, v) * this.worldHeight;
+    }
+    if (this.mode === 'mall' && this.mall) {
+      return this.mall.sampleHeight(u, v);
     }
     return 0;
   }
@@ -249,6 +291,7 @@ export class WorldManager {
       case 'terrain': return this.terrainMesh;
       case 'checkered': return this.checkerMesh;
       case 'mirror': return this.mirrorMesh;
+      case 'mall': return this.mall ? this.mall.getRaycastMesh() : null;
       case 'void': return null;
     }
   }
@@ -258,6 +301,7 @@ export class WorldManager {
       mode: this.mode,
       checker: { ...this.checkerParams },
       mirror: { ...this.mirrorParams },
+      mall: this.mall ? this.mall.serialize() : { ...this.mallParams },
     };
   }
 
@@ -265,6 +309,8 @@ export class WorldManager {
     if (!data) return;
     if (data.checker) Object.assign(this.checkerParams, data.checker);
     if (data.mirror) Object.assign(this.mirrorParams, data.mirror);
+    if (data.mall) Object.assign(this.mallParams, data.mall);
     if (data.mode) this.setMode(data.mode);
+    if (data.mall && this.mall) this.mall.deserialize(data.mall);
   }
 }

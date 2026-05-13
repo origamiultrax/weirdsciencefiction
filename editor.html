@@ -142,6 +142,7 @@
           <button class="world-btn active" data-world="terrain">▲<br>TERRAIN</button>
           <button class="world-btn" data-world="checkered">▦<br>CHECKER</button>
           <button class="world-btn" data-world="mirror">◈<br>MIRROR</button>
+          <button class="world-btn" data-world="mall">⌗<br>MALL</button>
           <button class="world-btn" data-world="void">○<br>VOID</button>
         </div>
       </div>
@@ -156,6 +157,32 @@
         <div class="sub-label">MIRROR PLANE</div>
         <div class="slider-row"><label>REFL</label><input type="range" id="mirrorRefl" min="0" max="200" value="100"><span class="val" id="mirrorReflV">1.00</span></div>
         <div class="color-row"><label>TINT</label><input type="color" id="mirrorTint" value="#0a4870"></div>
+      </div>
+      <div class="prop-subgroup" id="mallControls" style="display:none;">
+        <div class="sub-label">MALL PRESET</div>
+        <div class="button-row">
+          <button class="chunky-btn small" data-mallpreset="deadMall">DEAD</button>
+          <button class="chunky-btn small" data-mallpreset="tropicalAtrium">TROPIC</button>
+          <button class="chunky-btn small" data-mallpreset="neonArcade">NEON</button>
+        </div>
+        <div class="sub-label">PATTERN</div>
+        <div class="button-row">
+          <button class="chunky-btn small" data-mallpattern="diamond">DIAMND</button>
+          <button class="chunky-btn small" data-mallpattern="checker">CHECK</button>
+          <button class="chunky-btn small" data-mallpattern="grid">GRID</button>
+        </div>
+        <div class="color-row"><label>FL.A</label><input type="color" id="mallColA" value="#f5e8d8"></div>
+        <div class="color-row"><label>FL.B</label><input type="color" id="mallColB" value="#e8a8b8"></div>
+        <div class="color-row"><label>FL.C</label><input type="color" id="mallColC" value="#607080"></div>
+        <div class="color-row"><label>NEON</label><input type="color" id="mallNeon" value="#ff60a0"></div>
+        <div class="color-row"><label>AMBI</label><input type="color" id="mallAmbi" value="#ff80a0"></div>
+        <div class="slider-row"><label>STORE</label><input type="range" id="mallStore" min="0" max="100" value="85"><span class="val" id="mallStoreV">0.85</span></div>
+        <div class="slider-row"><label>MANNQ</label><input type="range" id="mallMann" min="0" max="100" value="70"><span class="val" id="mallMannV">0.70</span></div>
+        <div class="slider-row"><label>PALMS</label><input type="range" id="mallPalms" min="0" max="20" value="6"><span class="val" id="mallPalmsV">6</span></div>
+        <label class="check-row"><input type="checkbox" id="mallEsc" checked><span>ESCALATOR</span></label>
+        <label class="check-row"><input type="checkbox" id="mallCols" checked><span>CHROME COLUMNS</span></label>
+        <label class="check-row"><input type="checkbox" id="mallNeonStrips"><span>NEON STRIPS</span></label>
+        <label class="check-row"><input type="checkbox" id="mallFlicker" checked><span>FLICKER</span></label>
       </div>
     </div>
 
